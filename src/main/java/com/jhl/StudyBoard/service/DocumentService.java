@@ -7,9 +7,9 @@ import com.jhl.StudyBoard.entity.Document;
 
 public interface DocumentService {
 
-	public void createDocument(Document document);
+	public void insert(Document document);
 	
-	public List<Document> getDocuments();
+	public List<Document> findAll();
 	
 	public Optional<Document> findById(long id);
 	

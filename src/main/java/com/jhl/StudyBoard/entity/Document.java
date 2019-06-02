@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
@@ -21,6 +22,7 @@ public class Document {
 	private Long id;
 	
 	@Column(name = "title", length = 50, nullable = false)
+	@NotNull
 	private String title;
 	
 	private String content;

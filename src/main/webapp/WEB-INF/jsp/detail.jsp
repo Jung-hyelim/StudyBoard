@@ -1,28 +1,34 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
-<title>Insert title here</title>
+<title>Documents Detail</title>
 </head>
 <body>
 <div>
 	<h1>Document Detail</h1>
-	<table border="1">
+	<table border="1" width="500">
 		<tr>
-			<th>No.</th>
-			<td>{document.id }</td>
+			<th width="50">No.</th>
+			<td><c:out value="${document.id }"></c:out></td>
 		</tr>
 		<tr>
-			<th>Á¦¸ñ</th>
-			<td>{document.title }</td>
+			<th>ì œëª©</th>
+			<td><c:out value="${document.title }"></c:out></td>
 		</tr>
 		<tr>
-			<th>³»¿ë</th>
-			<td>{document.content }</td>
+			<th>ë‚´ìš©</th>
+			<td><textarea name="content" rows="8" cols="50" readonly="readonly">${document.content }</textarea></td>
 		</tr>
 	</table>
+	<button onclick="window.location.href='/documents'">ëª©ë¡</button>
+	<button onclick="window.location.href='/documents/${document.id}/edit'">ìˆ˜ì •</button>
+	<form action="/documents/${document.id }" method="post">
+		<input type="hidden" name="_method" value="DELETE">
+		<input type="submit" value="ì‚­ì œ">
+	</form>
 </div>
 </body>
 </html>

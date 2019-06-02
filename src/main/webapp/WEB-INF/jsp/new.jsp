@@ -4,28 +4,25 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
-<title>Documents List</title>
+<title>Documents New</title>
 </head>
 <body>
 <div>
-	<h1>Documents</h1>
+	<h1>Document New</h1>
+	<form action="/documents" method="post">
 	<table border="1" width="500">
-		<thead>
-			<tr>
-				<th width="50">No.</th>
-				<th>제목</th>
-			</tr>
-		</thead>
-		<tbody>
-			<c:forEach var="d" items="${list }">
-			<tr>
-				<td>${d.id }</td>
-				<td><a href="/documents/${d.id }">${d.title }</a></td>
-			</tr>
-			</c:forEach>
-		</tbody>
+		<tr>
+			<th width="50">제목</th>
+			<td><input type="text" name="title" value=""></td>
+		</tr>
+		<tr>
+			<th>내용</th>
+			<td><textarea name="content" rows="8" cols="50"></textarea></td>
+		</tr>
 	</table>
-	<button onclick="window.location.href='/documents/new'">글쓰기</button>
+	<input type="submit" value="저장">
+	</form>
+	<button onclick="window.location.href='/documents'">목록</button>
 </div>
 </body>
 </html>

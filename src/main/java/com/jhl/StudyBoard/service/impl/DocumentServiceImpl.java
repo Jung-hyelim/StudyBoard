@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.jhl.StudyBoard.entity.Document;
@@ -20,13 +21,14 @@ public class DocumentServiceImpl implements DocumentService {
 	private DocumentRepository documentRepository;
 	
 	@Override
-	public void createDocument(Document document) {
+	public void insert(Document document) {
 		documentRepository.save(document);
 	}
 	
 	@Override
-	public List<Document> getDocuments() {
-		return (List<Document>) documentRepository.findAll();
+	public List<Document> findAll() {
+		List<Document> list = documentRepository.findAll(Sort.by("id").descending());
+		return list;
 	}
 	
 	@Override

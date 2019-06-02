@@ -24,6 +24,6 @@ public class StudyBoardApplicationTests {
 		Document document = new Document();
 		document.setTitle("테스트");
 		document.setContent("테스트입니다.");
-		documentService.createDocument(document);
+		documentService.insert(document);
 	}
 }
