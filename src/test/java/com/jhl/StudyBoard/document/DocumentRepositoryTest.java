@@ -1,5 +1,6 @@
 package com.jhl.StudyBoard.document;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -17,8 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jhl.StudyBoard.entity.Document;
 import com.jhl.StudyBoard.repository.DocumentRepository;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest

@@ -9,7 +9,7 @@ import com.jhl.StudyBoard.entity.Document;
 
 public interface DocumentService {
 
-	public void insert(Document document);
+	public Document insert(Document document);
 	
 	public Page<Document> findAll(Pageable pageable);
 	

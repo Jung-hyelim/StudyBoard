@@ -21,8 +21,8 @@ public class DocumentServiceImpl implements DocumentService {
 	private DocumentRepository documentRepository;
 	
 	@Override
-	public void insert(Document document) {
-		documentRepository.save(document);
+	public Document insert(Document document) {
+		return documentRepository.save(document);
 	}
 	
 	@Override
@@ -32,7 +32,11 @@ public class DocumentServiceImpl implements DocumentService {
 	
 	@Override
 	public Optional<Document> findById(long id) {
-		return documentRepository.findById(id);
+		Optional<Document> document = documentRepository.findById(id);
+		if(document.isPresent()) {
+			document.get().getPhotos();
+		}
+		return document;
 	}
 	
 	@Override
@@ -42,6 +46,7 @@ public class DocumentServiceImpl implements DocumentService {
 	
 	@Override
 	public void delete(long id) {
+		
 		documentRepository.deleteById(id);
 	}
 }
