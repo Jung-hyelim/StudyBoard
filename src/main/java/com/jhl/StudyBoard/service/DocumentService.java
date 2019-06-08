@@ -1,7 +1,5 @@
 package com.jhl.StudyBoard.service;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,9 +11,9 @@ public interface DocumentService {
 	
 	public Page<Document> findAll(Pageable pageable);
 	
-	public Optional<Document> findById(long id);
+	public Document findById(long id);
 	
-	public Document update(Document document, long id);
+	public Document update(Document document);
 	
 	public void delete(long id);
 	

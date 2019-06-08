@@ -4,12 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.sql.DataSource;
-import javax.transaction.Transactional;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -52,97 +49,76 @@ public class DocumentServiceTest {
 		}
 	}
 	
-	// Data
-	public Document document() {
-		Document document = new Document();
-		document.setTitle("title");
-		document.setContent("content #new #test code");
-		List<Photo> photos = new ArrayList<Photo>();
-		for(int i = 0; i < PHOTO_SIZE; i++){
-			Photo photo = new Photo(document, "file"+i);
-			photos.add(photo);
-		}
-		document.setPhotos(photos);
-		return document;
-	}
-	
 	@Test
-	public void test10_insert() throws Exception {
-		Document document = document();
+	public void full_test() {
+		// insert data
+		Document document = new Document(null, "title", "content #new #test code");
+		for(int i = 0; i < PHOTO_SIZE; i++){
+			document.addPhoto(new Photo(null, document, "/photos_file", "file"+i));
+		}
+		
+		// insert
 		Document saved = documentService.insert(document);
 		
+		// insert test
 		assertThat(saved).isNotNull();
 		assertThat(saved.getId()).isEqualTo(1L);
 		assertThat(saved.getTitle()).isEqualTo(document.getTitle());
 		assertThat(saved.getContent()).isEqualTo(document.getContent());
 		assertThat(saved.getPhotos()).isNotEmpty();
 		assertThat(saved.getPhotos().size()).isEqualTo(PHOTO_SIZE);
-	}
-	
-	@Test
-	@Transactional
-	public void test20_findById() throws Exception {
-		Document selected = documentService.findById(1L).get();
 		
-		// document
-		Document document = document();
-		assertThat(selected).isNotNull();
-		assertThat(selected.getId()).isEqualTo(1L);
-		assertThat(selected.getTitle()).isEqualTo(document.getTitle());
-		assertThat(selected.getContent()).isEqualTo(document.getContent());
-		
-		// photos
-		List<Photo> selectedPhotos = selected.getPhotos();
-		assertThat(selectedPhotos.size()).isEqualTo(PHOTO_SIZE);
-		for(int i = 0; i < selectedPhotos.size(); i++){
-			assertThat(selectedPhotos.get(i).getId()).isEqualTo(i+1);
-			assertThat(selectedPhotos.get(i).getFile_name()).isEqualTo("file"+i);
-			assertThat(selectedPhotos.get(i).getDocument().getId()).isEqualTo(1L);
-		}
-	}
-	
-	@Test
-	@Transactional
-	public void test30_update() throws Exception {
-		Document document = documentService.findById(1L).get();
-		assertThat(document).isNotNull();
-		document.setTitle("change title");
-		document.setContent("#change #content #test code");
-		
-		List<Photo> photos = document.getPhotos();
-		assertThat(photos.size()).isEqualTo(PHOTO_SIZE);
-		photos.add(new Photo(document, "file3"));
-		document.setPhotos(photos);
+		// update data
+		System.out.println(">>"+saved.getId());
+		Document newDocument = new Document(saved.getId(), "change title", "#change #content #test code");
+		newDocument.addPhoto(new Photo(null, null, "/photos_file", "file0"));
+		newDocument.addPhoto(new Photo(null, null, "/photos_file", "file99"));
 		
 		// update
-		Document updated = documentService.update(document, 1L);
+		Document updated = documentService.update(newDocument);
 
-		// document
+		// update test - document
 		assertThat(updated).isNotNull();
-		assertThat(updated.getId()).isEqualTo(1L);
-		assertThat(updated.getTitle()).isEqualTo(document.getTitle());
-		assertThat(updated.getContent()).isEqualTo(document.getContent());
+		assertThat(updated.getId()).isEqualTo(newDocument.getId());
+		assertThat(updated.getTitle()).isEqualTo(newDocument.getTitle());
+		assertThat(updated.getContent()).isEqualTo(newDocument.getContent());
 		
-		// photos
+		// update test - photos
 		List<Photo> updatedPhotos = updated.getPhotos();
-		assertThat(updatedPhotos.size()).isEqualTo(PHOTO_SIZE+1);
-		for(int i = 0; i < updatedPhotos.size(); i++){
-			assertThat(updatedPhotos.get(i).getId()).isEqualTo(i+1);
-			assertThat(updatedPhotos.get(i).getFile_name()).isEqualTo("file"+i);
-			assertThat(updatedPhotos.get(i).getDocument().getId()).isEqualTo(1L);
+		assertThat(updatedPhotos.size()).isEqualTo(2);
+		assertThat(updatedPhotos.get(0).getFile_name()).isEqualTo(newDocument.getPhotos().get(0).getFile_name());
+		assertThat(updatedPhotos.get(0).getDocument().getId()).isEqualTo(newDocument.getId());
+		assertThat(updatedPhotos.get(1).getFile_name()).isEqualTo(newDocument.getPhotos().get(1).getFile_name());
+		assertThat(updatedPhotos.get(1).getDocument().getId()).isEqualTo(newDocument.getId());
+
+		// select
+		Document selected = documentService.findById(updated.getId());
+		
+		// select test - document
+		assertThat(selected).isNotNull();
+		assertThat(selected.getId()).isEqualTo(updated.getId());
+		assertThat(selected.getTitle()).isEqualTo(updated.getTitle());
+		assertThat(selected.getContent()).isEqualTo(updated.getContent());
+		
+		// select test - photos
+		List<Photo> selectedPhotos = selected.getPhotos();
+		assertThat(selectedPhotos).isNotNull();
+		assertThat(selectedPhotos).isNotEmpty();
+		assertThat(selectedPhotos.size()).isEqualTo(updated.getPhotos().size());
+		for(int i = 0; i < selectedPhotos.size(); i++){
+			assertThat(selectedPhotos.get(i).getFile_name()).isEqualTo(updated.getPhotos().get(i).getFile_name());
+			assertThat(selectedPhotos.get(i).getDocument().getId()).isEqualTo(updated.getPhotos().get(i).getDocument().getId());
 		}
-	}
-	
-	@Test
-	public void test40_delete() throws Exception {
-		// before delete
-		Optional<Document> before = documentService.findById(1L);
-		assertThat(before).isNotEmpty();
 		
-		documentService.delete(1L);
+		// delete
+		documentService.delete(saved.getId());
 		
-		// after delete
-		Optional<Document> after = documentService.findById(1L);
-		assertThat(after).isEmpty();
+		// delete - test
+		Document deleted = null;
+		try{
+			deleted = documentService.findById(saved.getId());
+		} catch(Exception e){
+			assertThat(deleted).withFailMessage(e.getMessage());
+		}
 	}
 }
