@@ -35,5 +35,6 @@ public class DocumentServiceInsertTest {
 		assertThat(saved.getContent()).isEqualTo(document.getContent());
 		assertThat(saved.getPhotos()).isNotEmpty();
 		assertThat(saved.getPhotos().size()).isEqualTo(DocumentData.PHOTO_INIT_SIZE);
+		assertThat(saved.getPhotos().get(0).getPhoto_texts().size()).isEqualTo(DocumentData.PHOTO_TEXT_INIT_SIZE);
 	}
 }

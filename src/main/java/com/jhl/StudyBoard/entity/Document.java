@@ -48,8 +48,10 @@ public class Document {
 		this.title = document.title;
 		this.content = document.content;
 
-		// photos
+		// clear
 		this.photos.clear();
+		
+		// photos
 		document.getPhotos().stream().forEach(p -> p.setDocument(this));
 		this.photos.addAll(document.getPhotos());
 	}

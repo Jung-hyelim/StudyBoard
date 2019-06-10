@@ -1,5 +1,6 @@
 package com.jhl.StudyBoard.service;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +30,7 @@ public class DocumentService {
 	@Transactional(readOnly=true)
 	public Document findById(long id) {
 		Document document = documentRepository.findById(id).orElseThrow(() -> new DocumentNotFoundException("no data in findById"));
-		document.getPhotos().size();
-		//Hibernate.initialize(document.getPhotos());
+		document.getPhotos().stream().forEach(p -> Hibernate.initialize(p.getPhoto_texts()));
 		return document;
 	}
 	

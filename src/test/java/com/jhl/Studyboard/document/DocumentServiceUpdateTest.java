@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.jhl.StudyBoard.data.DocumentData;
 import com.jhl.StudyBoard.entity.Document;
 import com.jhl.StudyBoard.entity.Photo;
+import com.jhl.StudyBoard.entity.PhotoText;
 import com.jhl.StudyBoard.service.DocumentService;
 
 @RunWith(SpringRunner.class)
@@ -49,11 +50,24 @@ public class DocumentServiceUpdateTest {
 		assertThat(updated.getContent()).isEqualTo(newDocument.getContent());
 
 		// update test - photos
+		List<Photo> newDocumentPhotos = newDocument.getPhotos();
 		List<Photo> updatedPhotos = updated.getPhotos();
-		assertThat(updatedPhotos.size()).isEqualTo(DocumentData.PHOTO_UPDATE_SIZE);
-		assertThat(updatedPhotos.get(0).getFile_name()).isEqualTo(newDocument.getPhotos().get(0).getFile_name());
-		assertThat(updatedPhotos.get(0).getDocument().getId()).isEqualTo(newDocument.getId());
-		assertThat(updatedPhotos.get(1).getFile_name()).isEqualTo(newDocument.getPhotos().get(1).getFile_name());
-		assertThat(updatedPhotos.get(1).getDocument().getId()).isEqualTo(newDocument.getId());
+		assertThat(updatedPhotos.size()).isEqualTo(newDocumentPhotos.size());
+		for(int i = 0; i < newDocumentPhotos.size(); i++) {
+			assertThat(updatedPhotos.get(i).getFile_path()).isEqualTo(newDocumentPhotos.get(i).getFile_path());
+			assertThat(updatedPhotos.get(i).getFile_name()).isEqualTo(newDocumentPhotos.get(i).getFile_name());
+			assertThat(updatedPhotos.get(i).getDocument().getId()).isEqualTo(newDocument.getId());
+		}
+		
+		// update test - photo_texts
+		List<PhotoText> newDocumentPhotoTexts = newDocumentPhotos.get(0).getPhoto_texts();
+		List<PhotoText> updatedPhotoTexts = updatedPhotos.get(0).getPhoto_texts();
+		assertThat(updatedPhotoTexts).isNotEmpty();
+		assertThat(updatedPhotoTexts.size()).isEqualTo(newDocumentPhotoTexts.size());
+		for(int i = 0; i < newDocumentPhotoTexts.size(); i++) {
+			assertThat(updatedPhotoTexts.get(i).getPosition_x()).isEqualTo(newDocumentPhotoTexts.get(i).getPosition_x());
+			assertThat(updatedPhotoTexts.get(i).getPosition_y()).isEqualTo(newDocumentPhotoTexts.get(i).getPosition_y());
+			assertThat(updatedPhotoTexts.get(i).getText()).isEqualTo(newDocumentPhotoTexts.get(i).getText());
+		}
 	}
 }

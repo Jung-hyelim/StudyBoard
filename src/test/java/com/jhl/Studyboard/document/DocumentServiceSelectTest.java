@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.jhl.StudyBoard.data.DocumentData;
 import com.jhl.StudyBoard.entity.Document;
 import com.jhl.StudyBoard.entity.Photo;
+import com.jhl.StudyBoard.entity.PhotoText;
 import com.jhl.StudyBoard.service.DocumentService;
 
 @RunWith(SpringRunner.class)
@@ -53,5 +54,12 @@ public class DocumentServiceSelectTest {
 			assertThat(selectedPhotos.get(i).getFile_name()).isEqualTo(saved.getPhotos().get(i).getFile_name());
 			assertThat(selectedPhotos.get(i).getDocument().getId()).isEqualTo(saved.getPhotos().get(i).getDocument().getId());
 		}
+		
+		// select test - photo_texts
+		List<PhotoText> selectedPhotoTexts = selectedPhotos.get(0).getPhoto_texts();
+		assertThat(selectedPhotoTexts).isNotNull();
+		assertThat(selectedPhotoTexts).isNotEmpty();
+		assertThat(selectedPhotoTexts.size()).isEqualTo(saved.getPhotos().get(0).getPhoto_texts().size());
+		
 	}
 }
