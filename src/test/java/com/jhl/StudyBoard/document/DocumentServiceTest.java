@@ -2,54 +2,32 @@ package com.jhl.StudyBoard.document;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jhl.StudyBoard.entity.Document;
 import com.jhl.StudyBoard.entity.Photo;
+import com.jhl.StudyBoard.exception.DocumentNotFoundException;
 import com.jhl.StudyBoard.service.DocumentService;
 
 @RunWith(SpringRunner.class)
 @TestPropertySource("classpath:application-test.properties")
-@SpringBootTest
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class DocumentServiceTest {
 
-	@Autowired
-	private DataSource datasource;
-	
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
-	
 	@Autowired
 	private DocumentService documentService;
 
 	private static int PHOTO_SIZE = 3;
 	
-	@Before
-	public void di() throws Exception {
-		try(Connection connection = datasource.getConnection()) {
-			DatabaseMetaData metaData = connection.getMetaData();
-			assertThat(metaData.getURL()).isEqualTo("jdbc:h2:mem:testdb");
-			assertThat(metaData.getDriverName()).isEqualTo("H2 JDBC Driver");
-		}
-	}
-	
-	@Test
+	@Test(expected = DocumentNotFoundException.class)
 	public void full_test() {
 		// insert data
 		Document document = new Document(null, "title", "content #new #test code");
@@ -69,7 +47,6 @@ public class DocumentServiceTest {
 		assertThat(saved.getPhotos().size()).isEqualTo(PHOTO_SIZE);
 		
 		// update data
-		System.out.println(">>"+saved.getId());
 		Document newDocument = new Document(saved.getId(), "change title", "#change #content #test code");
 		newDocument.addPhoto(new Photo(null, null, "/photos_file", "file0"));
 		newDocument.addPhoto(new Photo(null, null, "/photos_file", "file99"));
@@ -114,11 +91,6 @@ public class DocumentServiceTest {
 		documentService.delete(saved.getId());
 		
 		// delete - test
-		Document deleted = null;
-		try{
-			deleted = documentService.findById(saved.getId());
-		} catch(Exception e){
-			assertThat(deleted).withFailMessage(e.getMessage());
-		}
+		documentService.findById(saved.getId());
 	}
 }

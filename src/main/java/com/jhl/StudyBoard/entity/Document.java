@@ -15,18 +15,15 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @Table(name = "document")
 @Getter
-@ToString
 @NoArgsConstructor
 public class Document {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column
 	private Long id;
 	
 	@Column(length = 50)
