@@ -31,12 +31,18 @@ public class Document {
 	
 	@Column
 	private String content;
-	
+
 	@OneToMany(mappedBy = "document", 
 			fetch = FetchType.LAZY, 
 			cascade = CascadeType.ALL, 
 			orphanRemoval = true)
 	private List<Photo> photos = new ArrayList<Photo>();
+
+	@OneToMany(mappedBy = "document",
+			fetch = FetchType.LAZY, 
+			cascade = CascadeType.ALL, 
+			orphanRemoval = true)
+	private List<DocumentAndTag> mappings = new ArrayList<DocumentAndTag>();
 	
 	public Document(Long id, String title, String content) {
 		this.id = id;
@@ -50,13 +56,22 @@ public class Document {
 
 		// clear
 		this.photos.clear();
+		this.mappings.clear();
 		
 		// photos
 		document.getPhotos().stream().forEach(p -> p.setDocument(this));
 		this.photos.addAll(document.getPhotos());
+		
+		// tag mapping
+		document.getMappings().stream().forEach(m -> m.setDocument(this));
+		this.mappings.addAll(document.getMappings());
 	}
 	
 	public void addPhoto(Photo photo) {
 		this.photos.add(photo);
+	}
+	
+	public void setMappings(List<DocumentAndTag> documentAndTag) {
+		this.mappings.addAll(documentAndTag);
 	}
 }

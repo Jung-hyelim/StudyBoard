@@ -1,5 +1,7 @@
 package com.jhl.StudyBoard.document;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.jhl.StudyBoard.data.DocumentData;
 import com.jhl.StudyBoard.entity.Document;
 import com.jhl.StudyBoard.exception.DocumentNotFoundException;
+import com.jhl.StudyBoard.repository.TagRepository;
 import com.jhl.StudyBoard.service.DocumentService;
 
 @RunWith(SpringRunner.class)
@@ -21,6 +24,9 @@ public class DocumentServiceDeleteTest {
 
 	@Autowired
 	private DocumentService documentService;
+	
+	@Autowired
+	private TagRepository tagRepository;
 	
 	private Long savedDocumentId;
 	
@@ -34,6 +40,9 @@ public class DocumentServiceDeleteTest {
 	public void delete() {
 		// delete
 		documentService.delete(savedDocumentId);
+
+		// tag는 삭제되면 안됨
+		assertThat(tagRepository.findAll()).isNotEmpty();
 		
 		// delete - test
 		documentService.findById(savedDocumentId);

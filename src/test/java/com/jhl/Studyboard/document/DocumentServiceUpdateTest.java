@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jhl.StudyBoard.data.DocumentData;
 import com.jhl.StudyBoard.entity.Document;
+import com.jhl.StudyBoard.entity.DocumentAndTag;
 import com.jhl.StudyBoard.entity.Photo;
 import com.jhl.StudyBoard.entity.PhotoText;
 import com.jhl.StudyBoard.service.DocumentService;
@@ -38,36 +39,47 @@ public class DocumentServiceUpdateTest {
 	@Test
 	public void update() {
 		// update data
-		Document newDocument = DocumentData.updateData(savedDocumentId);
+		Document data = DocumentData.updateData(savedDocumentId);
 
 		// update
-		Document updated = documentService.update(newDocument);
+		Document updated = documentService.update(data);
 
-		// update test - document
+		// document
 		assertThat(updated).isNotNull();
-		assertThat(updated.getId()).isEqualTo(newDocument.getId());
-		assertThat(updated.getTitle()).isEqualTo(newDocument.getTitle());
-		assertThat(updated.getContent()).isEqualTo(newDocument.getContent());
+		assertThat(updated.getId()).isEqualTo(data.getId());
+		assertThat(updated.getTitle()).isEqualTo(data.getTitle());
+		assertThat(updated.getContent()).isEqualTo(data.getContent());
 
-		// update test - photos
-		List<Photo> newDocumentPhotos = newDocument.getPhotos();
+		// photos
 		List<Photo> updatedPhotos = updated.getPhotos();
-		assertThat(updatedPhotos.size()).isEqualTo(newDocumentPhotos.size());
-		for(int i = 0; i < newDocumentPhotos.size(); i++) {
-			assertThat(updatedPhotos.get(i).getFile_path()).isEqualTo(newDocumentPhotos.get(i).getFile_path());
-			assertThat(updatedPhotos.get(i).getFile_name()).isEqualTo(newDocumentPhotos.get(i).getFile_name());
-			assertThat(updatedPhotos.get(i).getDocument().getId()).isEqualTo(newDocument.getId());
+		List<Photo> dataPhotos = data.getPhotos();
+		assertThat(updatedPhotos).isNotEmpty();
+		assertThat(updatedPhotos.size()).isEqualTo(dataPhotos.size());
+		for(int i = 0; i < updatedPhotos.size(); i++) {
+			assertThat(updatedPhotos.get(i).getDocument().getId()).isEqualTo(data.getId());
+			assertThat(updatedPhotos.get(i).getFile_path()).isEqualTo(dataPhotos.get(i).getFile_path());
+			assertThat(updatedPhotos.get(i).getFile_name()).isEqualTo(dataPhotos.get(i).getFile_name());
+			
+			// photo texts
+			List<PhotoText> updatedPhotoTexts = updatedPhotos.get(i).getPhoto_texts();
+			List<PhotoText> dataPhotoTexts = dataPhotos.get(i).getPhoto_texts();
+			assertThat(updatedPhotoTexts).isNotNull();
+			assertThat(updatedPhotoTexts.size()).isEqualTo(dataPhotoTexts.size());
+			for(int j = 0; j < dataPhotoTexts.size(); j++) {
+				//assertThat(updatedPhotoTexts.get(j).getPhoto().getId()).isEqualTo(dataPhotoTexts.get(j).getPhoto().getId());
+				assertThat(updatedPhotoTexts.get(j).getPosition_x()).isEqualTo(dataPhotoTexts.get(j).getPosition_x());
+				assertThat(updatedPhotoTexts.get(j).getPosition_y()).isEqualTo(dataPhotoTexts.get(j).getPosition_y());
+				assertThat(updatedPhotoTexts.get(j).getText()).isEqualTo(dataPhotoTexts.get(j).getText());
+			}
 		}
 		
-		// update test - photo_texts
-		List<PhotoText> newDocumentPhotoTexts = newDocumentPhotos.get(0).getPhoto_texts();
-		List<PhotoText> updatedPhotoTexts = updatedPhotos.get(0).getPhoto_texts();
-		assertThat(updatedPhotoTexts).isNotEmpty();
-		assertThat(updatedPhotoTexts.size()).isEqualTo(newDocumentPhotoTexts.size());
-		for(int i = 0; i < newDocumentPhotoTexts.size(); i++) {
-			assertThat(updatedPhotoTexts.get(i).getPosition_x()).isEqualTo(newDocumentPhotoTexts.get(i).getPosition_x());
-			assertThat(updatedPhotoTexts.get(i).getPosition_y()).isEqualTo(newDocumentPhotoTexts.get(i).getPosition_y());
-			assertThat(updatedPhotoTexts.get(i).getText()).isEqualTo(newDocumentPhotoTexts.get(i).getText());
-		}
+		// tags
+		List<DocumentAndTag> updatedMappings = updated.getMappings();
+		List<DocumentAndTag> dataMappings = data.getMappings();
+		assertThat(updatedMappings).isNotEmpty();
+		assertThat(updatedMappings.size()).isEqualTo(dataMappings.size());
+		updatedMappings.stream().forEach(m -> {
+			assertThat(dataMappings.contains(m)).isTrue();
+		});
 	}
 }
