@@ -53,6 +53,8 @@ public class DocumentService {
 		dto.setId(document.getId());
 		dto.setTitle(document.getTitle());
 		dto.setContent(document.getContent());
+		dto.setCreate_date(document.getCreate_date());
+		dto.setUpdate_date(document.getCreate_date());
 		dto.setPhotos(document.getPhotos());
 		document.getMappings().stream().forEach(m -> {
 			dto.addTag(m.getTag());
