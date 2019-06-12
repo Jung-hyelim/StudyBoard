@@ -5,7 +5,8 @@ import java.util.List;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,12 +38,12 @@ public class DocumentService {
 	}
 	
 	@Transactional(readOnly=true)
-	public Page<Document> findAll(Pageable pageable) {
-		return documentRepository.findAll(pageable);
+	public Page<Document> selectList(int page, int size) {
+		return documentRepository.findAll(new PageRequest(page, size, Direction.DESC, "id"));
 	}
 	
 	@Transactional(readOnly=true)
-	public DocumentDTO findById(long id) {
+	public DocumentDTO select(long id) {
 		Document document = documentRepository.findById(id).orElseThrow(() -> new DocumentNotFoundException("no data in findById"));
 		document.getPhotos().stream().forEach(p -> Hibernate.initialize(p.getPhoto_texts()));
 		Hibernate.initialize(document.getMappings());

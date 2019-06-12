@@ -45,6 +45,6 @@ public class DocumentServiceDeleteTest {
 		assertThat(tagRepository.findAll()).isNotEmpty();
 		
 		// delete - test
-		documentService.findById(savedDocumentId);
+		documentService.select(savedDocumentId);
 	}
 }

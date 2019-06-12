@@ -40,7 +40,7 @@ public class DocumentServiceSelectTest {
 	@Test
 	public void select() {
 		// select
-		DocumentDTO selected = documentService.findById(data.getId());
+		DocumentDTO selected = documentService.select(data.getId());
 		
 		// document
 		assertThat(selected).isNotNull();
