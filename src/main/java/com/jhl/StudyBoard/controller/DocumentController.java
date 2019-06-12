@@ -1,81 +1,63 @@
 package com.jhl.StudyBoard.controller;
 
-import java.util.Optional;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.jhl.StudyBoard.dto.DocumentDTO;
 import com.jhl.StudyBoard.entity.Document;
-import com.jhl.StudyBoard.repository.DocumentRepository;
 import com.jhl.StudyBoard.service.DocumentService;
 
-@Controller
-@RequestMapping("/")
+@Api(description = "문서 API")
+@RestController
+@RequestMapping("/api/document")
 public class DocumentController {
 	
-	private final int PAGE_SIZE = 3;
-	private final String REDIRECT_MAPPING = "redirect:/";
-
-	//@Autowired
-	//private DocumentService documentService;
-	
 	@Autowired
-	private DocumentRepository documentRepository;
+	private DocumentService documentService;
 	
+	@ApiOperation(value = "문서 리스트")
 	@GetMapping("")
-	public String getDocuments(Model model,
-			@PageableDefault(sort = { "id" }, direction = Direction.DESC, size = PAGE_SIZE, page = 0) Pageable pageable) {
-		Page<Document> result = documentRepository.findAll(pageable);
-		model.addAttribute("page", result);
-		return "list";
+	public List<Document> getDocuments() {
+		List<Document> result = null;//documentService.findAll();
+		return result;
 	}
-	
+
+	@ApiOperation(value = "문서 상세 정보")
 	@GetMapping("/{id}")
-	public String showDocuments(Model model, @PathVariable("id") Long id) {
-		Optional<Document> document = documentRepository.findById(id);
-		model.addAttribute("document", document.get());
-		return "detail";
-	}
-	
-	@GetMapping("/new")
-	public String newDocuments(Model model) {
-		return "new";
+	public DocumentDTO showDocuments(@PathVariable("id") Long id) {
+		DocumentDTO documentDto = documentService.findById(id);
+		return documentDto;
 	}
 
-	@GetMapping("/edit/{id}")
-	public String editDocuments(Model model, @PathVariable("id") Long id) {
-		Optional<Document> document = documentRepository.findById(id);
-		model.addAttribute("document", document.get());
-		return "edit";
-	}
-
+	@ApiOperation(value = "문서 저장")
 	@PostMapping("")
-	public String addDocuments(Document document) {
-		documentRepository.save(document);
-		return REDIRECT_MAPPING;
+	public Document addDocuments(Document document) {
+		Document saved = documentService.insert(document);
+		return saved;
 	}
-	
+
+	@ApiOperation(value = "문서 수정")
 	@PutMapping("/{id}")
-	public String updateDocuments(Document document, @PathVariable("id") Long id) {
-		documentRepository.save(document);
-		return REDIRECT_MAPPING+id;
+	public Document updateDocuments(Document document, @PathVariable("id") Long id) {
+		Document saved = documentService.update(document);
+		return saved;
 	}
-	
+
+	@ApiOperation(value = "문서 삭제")
 	@DeleteMapping("/{id}")
-	public String deleteDocuments(@PathVariable("id") Long id) {
-		documentRepository.deleteById(id);
-		return REDIRECT_MAPPING;
+	public void deleteDocuments(@PathVariable("id") Long id) {
+		documentService.delete(id);
 	}
 	
 }
