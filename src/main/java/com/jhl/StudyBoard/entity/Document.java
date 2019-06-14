@@ -14,11 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.jhl.StudyBoard.dto.DocumentDTO;
 
 @Entity
 @Table(name = "document")
@@ -85,5 +87,12 @@ public class Document {
 	
 	public void setMappings(List<DocumentAndTag> documentAndTag) {
 		this.mappings.addAll(documentAndTag);
+	}
+	
+	public void setFromDto(DocumentDTO dto) {
+		this.id = dto.getId();
+		this.title = dto.getTitle();
+		this.content = dto.getContent();
+//		dto.getPhotos().stream().forEach(p -> this.photos.add(p));
 	}
 }

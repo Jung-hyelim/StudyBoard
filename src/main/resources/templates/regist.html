@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorator="layout/default">
+
+<th:block layout:fragment="script">
+<script type="text/javascript" th:inline="javascript">
+/*<![CDATA[*/ 
+
+/*]]>*/
+</script>
+</th:block>
+
+	<div layout:fragment="mainFragment">
+		<form th:action="@{/(page=${page})}" role="form" th:object="${document}" method="post" id="document-form">
+			<table>
+				<tr th:if="${mode} == edit">
+					<th>No.</th>
+					<td><input th:field="*{id}" type="text" readonly="readonly"></td>
+				</tr>
+				<tr>
+					<th>제목</th>
+					<td><input th:field="*{title}" type="text" required="required"></td>
+				</tr>
+				<tr>
+					<th>내용</th>
+					<td><textarea th:field="*{content}" required="required"></textarea></td>
+				</tr>
+				<tr>
+					<th>사진</th>
+					<td>
+						<div class="photo-box">
+							<ol>
+								<!-- <th:block th:each="index: ${#numbers.sequence(1,5)}">
+							        <li><img th:src="'/images/PIXNIO-' + ${index} + '.jfif'" th:alt="'PIXNIO-' + ${index}" onclick=""></li>
+							    </th:block> -->
+							    <th:block th:each="photo, i : *{photos}">
+							    	<li>
+				    					<input type="text" th:field="*{photos[__${i.index}__].file_name}" placeholder="사진">
+				    					<ul>
+				    						<th:block th:each="photo_text, j : *{photos[__${i.index}__].photo_texts}">
+				    							<li>
+				    								<input type="number" th:field="*{photos[__${i.index}__].photo_texts[__${j.index}__].position_x}" placeholder="x좌표">
+				    								<input type="number" th:field="*{photos[__${i.index}__].photo_texts[__${j.index}__].position_y}" placeholder="y좌표">
+				    								<input type="text" th:field="*{photos[__${i.index}__].photo_texts[__${j.index}__].text}" placeholder="텍스트">
+				    							</li>
+				    						</th:block>
+				    					</ul>
+							    	</li>
+							    </th:block>
+							</ol>
+						</div>
+					</td>
+				</tr>
+			</table>
+			<div class="button-box">
+				<input th:if="${mode} == new" type="hidden" name="_method" id="hidden-method" value="post"/>
+				<input th:if="${mode} == edit" type="hidden" name="_method" id="hidden-method" value="put"/>
+				<input type="submit" class="btn" value="저장" id="btn-save">
+			</div>
+		</form>
+	</div>
+</html>

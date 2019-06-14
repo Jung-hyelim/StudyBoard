@@ -6,3 +6,6 @@
 - Java 8
 - JPA
 - MySQL
+
+## Front-end
+- thymeleaf
