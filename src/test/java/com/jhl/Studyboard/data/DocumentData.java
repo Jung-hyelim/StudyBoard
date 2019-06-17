@@ -1,37 +1,30 @@
 package com.jhl.StudyBoard.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.jhl.StudyBoard.entity.Document;
-import com.jhl.StudyBoard.entity.DocumentAndTag;
-import com.jhl.StudyBoard.entity.Photo;
-import com.jhl.StudyBoard.entity.PhotoText;
-import com.jhl.StudyBoard.entity.Tag;
+import com.jhl.StudyBoard.dto.DocumentDTO;
+import com.jhl.StudyBoard.dto.PhotoDTO;
+import com.jhl.StudyBoard.dto.PhotoTextDTO;
+import com.jhl.StudyBoard.dto.TagDTO;
 
 public class DocumentData {
 
-	public static Document initData() {
-		Document document = new Document(null, "title", "content #new #test code");
+	public static DocumentDTO initData() {
+		DocumentDTO document = new DocumentDTO();
+		document.setTitle("title");
+		document.setContent("content #new #test code");
 
-		Photo photo1 = new Photo(null, document, "/photos_file", "file1");
-		Photo photo2 = new Photo(null, document, "/photos_file", "file2");
-		Photo photo3 = new Photo(null, document, "/photos_file", "file3");
+		PhotoDTO photo1 = new PhotoDTO("/photos_file", "file1");
+		PhotoDTO photo2 = new PhotoDTO("/photos_file", "file2");
+		PhotoDTO photo3 = new PhotoDTO("/photos_file", "file3");
 
-		PhotoText photoText1 = new PhotoText(null, photo1, 1, 1, "text1");
-		PhotoText photoText2 = new PhotoText(null, photo1, 10.5, 7.4, "text2");
+		PhotoTextDTO photoText1 = new PhotoTextDTO(1, 1, "text1");
+		PhotoTextDTO photoText2 = new PhotoTextDTO(10.5, 7.4, "text2");
 		
-		Tag tag1 = new Tag(null, "new");
-		Tag tag2 = new Tag(null, "test");
-
-		DocumentAndTag mapping1 = new DocumentAndTag(null, document, tag1);
-		DocumentAndTag mapping2 = new DocumentAndTag(null, document, tag2);
+		TagDTO tag1 = new TagDTO("new");
+		TagDTO tag2 = new TagDTO("test");
 		
-		List<DocumentAndTag> mappings = new ArrayList<DocumentAndTag>();
-		mappings.add(mapping1);
-		mappings.add(mapping2);
-		document.setMappings(mappings);
-
+		document.addTag(tag1);
+		document.addTag(tag2);
+		
 		photo1.addText(photoText1);
 		photo1.addText(photoText2);
 		
@@ -42,27 +35,24 @@ public class DocumentData {
 		return document;
 	}
 	
-	public static Document updateData(Long id) {
-		Document document = new Document(id, "change title", "#change #content #test code");
+	public static DocumentDTO updateData(Long id) {
+		DocumentDTO document = new DocumentDTO();
+		document.setId(id);
+		document.setTitle("change title");
+		document.setContent("#change #content #test code");
 
-		Photo photo1 = new Photo(null, document, "/photos_file", "file1");
-		Photo photo2 = new Photo(null, document, "/photos_file", "file2");
+		PhotoDTO photo1 = new PhotoDTO("/photos_file", "file1");
+		PhotoDTO photo2 = new PhotoDTO("/photos_file", "file2");
 
-		PhotoText photoText1 = new PhotoText(null, photo1, 9.1, 1.9, "update text");
+		PhotoTextDTO photoText1 = new PhotoTextDTO(9.1, 1.9, "update text");
 		
-		Tag tag1 = new Tag(null, "change");
-		Tag tag2 = new Tag(null, "content");
-		Tag tag3 = new Tag(null, "test");
-
-		DocumentAndTag mapping1 = new DocumentAndTag(null, document, tag1);
-		DocumentAndTag mapping2 = new DocumentAndTag(null, document, tag2);
-		DocumentAndTag mapping3 = new DocumentAndTag(null, document, tag3);
+		TagDTO tag1 = new TagDTO("change");
+		TagDTO tag2 = new TagDTO("content");
+		TagDTO tag3 = new TagDTO("test");
 		
-		List<DocumentAndTag> mappings = new ArrayList<DocumentAndTag>();
-		mappings.add(mapping1);
-		mappings.add(mapping2);
-		mappings.add(mapping3);
-		document.setMappings(mappings);
+		document.addTag(tag1);
+		document.addTag(tag2);
+		document.addTag(tag3);
 		
 		photo1.addText(photoText1);
 		

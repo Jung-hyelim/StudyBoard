@@ -73,8 +73,11 @@ public class Document {
 		this.mappings.clear();
 		
 		// photos
-		document.getPhotos().stream().forEach(p -> p.setDocument(this));
-		this.photos.addAll(document.getPhotos());
+		document.getPhotos().stream().forEach(p -> {
+			p.setDocument(this);
+			this.photos.add(p);
+		});
+		//this.photos.addAll(document.getPhotos());
 		
 		// tag mapping
 		document.getMappings().stream().forEach(m -> m.setDocument(this));
@@ -93,6 +96,21 @@ public class Document {
 		this.id = dto.getId();
 		this.title = dto.getTitle();
 		this.content = dto.getContent();
-//		dto.getPhotos().stream().forEach(p -> this.photos.add(p));
+		
+		dto.getPhotos().stream().forEach(p -> {
+			if(p.getFile_name() != null){
+				Photo photo = new Photo(null, this, p.getFile_path(), p.getFile_name());
+				p.getPhoto_texts().stream().forEach(t -> {
+					if(t.getText() != null && !t.getText().equals("")){
+						photo.addText(new PhotoText(null, photo, t.getPosition_x(), t.getPosition_y(), t.getText()));
+					}
+				});
+				this.photos.add(photo);
+			}
+		});
+		
+		dto.getTags().stream().forEach(t -> {
+			this.mappings.add(new DocumentAndTag(null, this, new Tag(null, t.getName())));
+		});
 	}
 }

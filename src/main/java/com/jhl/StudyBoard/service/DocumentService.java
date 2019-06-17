@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jhl.StudyBoard.dto.DocumentDTO;
+import com.jhl.StudyBoard.dto.DocumentListDTO;
 import com.jhl.StudyBoard.entity.Document;
 import com.jhl.StudyBoard.entity.Tag;
 import com.jhl.StudyBoard.exception.DocumentNotFoundException;
@@ -27,7 +28,10 @@ public class DocumentService {
 	private TagRepository tagRepository;
 	
 	@Transactional(readOnly=false)
-	public Document insert(Document document) {
+	public Document insert(DocumentDTO documentDto) {
+		Document document = new Document();
+		document.setFromDto(documentDto);
+		
 		// Tag가 기존에 있는지 조회 후, 조회된 Tag로 셋팅
 		document.getMappings().stream().forEach(m -> {
 			List<Tag> findTag = tagRepository.findByName(m.getTag().getName());
@@ -38,8 +42,9 @@ public class DocumentService {
 	}
 	
 	@Transactional(readOnly=true)
-	public Page<Document> selectList(int page, int size) {
-		return documentRepository.findAll(new PageRequest(page, size, Direction.DESC, "id"));
+	public DocumentListDTO selectList(int page, int size) {
+		Page<Document> document = documentRepository.findAll(new PageRequest(page, size, Direction.DESC, "id"));
+		return new DocumentListDTO(document);
 	}
 	
 	@Transactional(readOnly=true)
@@ -50,22 +55,16 @@ public class DocumentService {
 		
 		// DTO
 		DocumentDTO dto = new DocumentDTO();
-		dto.setId(document.getId());
-		dto.setTitle(document.getTitle());
-		dto.setContent(document.getContent());
-		dto.setCreate_date(document.getCreate_date());
-		dto.setUpdate_date(document.getCreate_date());
-		dto.setPhotos(document.getPhotos());
-		document.getMappings().stream().forEach(m -> {
-			dto.addTag(m.getTag());
-		});
-		
+		dto.setFromEntity(document);
 		return dto;
 	}
 	
 	@Transactional(readOnly=false)
-	public Document update(Document changeDocument) {
-		Document document = documentRepository.findById(changeDocument.getId()).orElseThrow(() -> new DocumentNotFoundException("no data in update"));
+	public Document update(DocumentDTO changeDocumentDto) {
+		Document document = documentRepository.findById(changeDocumentDto.getId()).orElseThrow(() -> new DocumentNotFoundException("no data in update"));
+
+		Document changeDocument = new Document();
+		changeDocument.setFromDto(changeDocumentDto);
 		
 		// Tag가 기존에 있는지 조회 후, 조회된 Tag로 셋팅
 		changeDocument.getMappings().stream().forEach(m -> {

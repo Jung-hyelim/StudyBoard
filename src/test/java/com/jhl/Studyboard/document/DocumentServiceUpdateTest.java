@@ -14,6 +14,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jhl.StudyBoard.data.DocumentData;
+import com.jhl.StudyBoard.dto.DocumentDTO;
+import com.jhl.StudyBoard.dto.PhotoDTO;
+import com.jhl.StudyBoard.dto.PhotoTextDTO;
+import com.jhl.StudyBoard.dto.TagDTO;
 import com.jhl.StudyBoard.entity.Document;
 import com.jhl.StudyBoard.entity.DocumentAndTag;
 import com.jhl.StudyBoard.entity.Photo;
@@ -39,7 +43,7 @@ public class DocumentServiceUpdateTest {
 	@Test
 	public void update() {
 		// update data
-		Document data = DocumentData.updateData(savedDocumentId);
+		DocumentDTO data = DocumentData.updateData(savedDocumentId);
 
 		// update
 		Document updated = documentService.update(data);
@@ -52,7 +56,7 @@ public class DocumentServiceUpdateTest {
 
 		// photos
 		List<Photo> updatedPhotos = updated.getPhotos();
-		List<Photo> dataPhotos = data.getPhotos();
+		List<PhotoDTO> dataPhotos = data.getPhotos();
 		assertThat(updatedPhotos).isNotEmpty();
 		assertThat(updatedPhotos.size()).isEqualTo(dataPhotos.size());
 		for(int i = 0; i < updatedPhotos.size(); i++) {
@@ -62,7 +66,7 @@ public class DocumentServiceUpdateTest {
 			
 			// photo texts
 			List<PhotoText> updatedPhotoTexts = updatedPhotos.get(i).getPhoto_texts();
-			List<PhotoText> dataPhotoTexts = dataPhotos.get(i).getPhoto_texts();
+			List<PhotoTextDTO> dataPhotoTexts = dataPhotos.get(i).getPhoto_texts();
 			assertThat(updatedPhotoTexts).isNotNull();
 			assertThat(updatedPhotoTexts.size()).isEqualTo(dataPhotoTexts.size());
 			for(int j = 0; j < dataPhotoTexts.size(); j++) {
@@ -75,11 +79,11 @@ public class DocumentServiceUpdateTest {
 		
 		// tags
 		List<DocumentAndTag> updatedMappings = updated.getMappings();
-		List<DocumentAndTag> dataMappings = data.getMappings();
+		List<TagDTO> dataMappings = data.getTags();
 		assertThat(updatedMappings).isNotEmpty();
 		assertThat(updatedMappings.size()).isEqualTo(dataMappings.size());
-		updatedMappings.stream().forEach(m -> {
-			assertThat(dataMappings.contains(m)).isTrue();
-		});
+		for(int i = 0; i < updatedMappings.size(); i++){
+			assertThat(updatedMappings.get(i).getTag().getName()).isEqualTo(dataMappings.get(i).getName());
+		}
 	}
 }

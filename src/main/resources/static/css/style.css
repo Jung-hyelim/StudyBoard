@@ -108,6 +108,54 @@ table textarea {
 	overflow-y: auto;
 }
 
+table pre {
+	width: 100%;
+	font-size: 1.2em;
+}
+
+/* input-photo-box */
+.input-photo-box ol,ul {
+	list-style: none;
+}
+.input-photo-box ol>li {
+	list-style: none;
+	border: 2px solid #c8b9d5;
+	margin: 5px;
+	padding: 5px;
+}
+
+.input-photo-box .input-photo-name {
+	width: 40%;
+	font-size: 1.0em;
+}
+
+.input-photo-box .input-photo-text {
+	width: 60%;
+	font-size: 1.0em;
+	margin-left: 5px;
+}
+
+.input-photo-box .input-photo-position {
+	width: 10%;
+	text-align: right;
+}
+
+.input-photo-box .btn {
+	background-color: #dfbfff;
+	border: none;
+	color: #a346ff;
+	padding: 3px 7px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	cursor: pointer;
+	border-radius: 2px;
+	margin-left: 5px;
+}
+.input-photo-box .btn:hover {
+	color: #400080;
+}
+
 /* photo-box */
 .photo-box {
 	overflow: hidden;

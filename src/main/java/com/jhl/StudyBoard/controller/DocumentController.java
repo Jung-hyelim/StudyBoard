@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jhl.StudyBoard.dto.DocumentDTO;
+import com.jhl.StudyBoard.dto.DocumentListDTO;
 import com.jhl.StudyBoard.entity.Document;
 import com.jhl.StudyBoard.service.DocumentService;
 
@@ -28,9 +28,9 @@ public class DocumentController {
 	
 	@ApiOperation(value = "문서 리스트")
 	@GetMapping("")
-	public Page<Document> getDocuments(@RequestParam(value="page", defaultValue="0") int page, 
+	public DocumentListDTO getDocuments(@RequestParam(value="page", defaultValue="0") int page, 
 										@RequestParam(value="size", required=false, defaultValue="10") int size) {
-		Page<Document> result = documentService.selectList(page, size);
+		DocumentListDTO result = documentService.selectList(page, size);
 		return result;
 	}
 
@@ -43,14 +43,14 @@ public class DocumentController {
 
 	@ApiOperation(value = "문서 저장")
 	@PostMapping("")
-	public Document addDocuments(Document document) {
+	public Document addDocuments(DocumentDTO document) {
 		Document saved = documentService.insert(document);
 		return saved;
 	}
 
 	@ApiOperation(value = "문서 수정")
 	@PutMapping("/{id}")
-	public Document updateDocuments(Document document, @PathVariable("id") Long id) {
+	public Document updateDocuments(DocumentDTO document, @PathVariable("id") Long id) {
 		Document saved = documentService.update(document);
 		return saved;
 	}

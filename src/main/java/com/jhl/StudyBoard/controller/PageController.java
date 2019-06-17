@@ -3,8 +3,10 @@ package com.jhl.StudyBoard.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.jhl.StudyBoard.dto.DocumentDTO;
-import com.jhl.StudyBoard.entity.Document;
+import com.jhl.StudyBoard.dto.DocumentListDTO;
+import com.jhl.StudyBoard.dto.TagDTO;
 import com.jhl.StudyBoard.service.DocumentService;
 
 @Api(description = "페이지 이동 API")
@@ -30,10 +33,10 @@ public class PageController {
 	public String goList(Model model,
 			@RequestParam(value="page", defaultValue="0") int page, 
 			@RequestParam(value="size", required=false, defaultValue="10") int size) {
-		Page<Document> result = documentService.selectList(page, size);
-		model.addAttribute("list", result.getContent());
+		DocumentListDTO result = documentService.selectList(page, size);
+		model.addAttribute("list", result.getList());
 		model.addAttribute("totalPage", result.getTotalPages());
-		model.addAttribute("page", result.getNumber());
+		model.addAttribute("page", result.getPage());
 		return "list";
 	}
 
@@ -41,10 +44,9 @@ public class PageController {
 	@RequestMapping(value="/", method=RequestMethod.POST)
 	public String addDocument(Model model,
 			@ModelAttribute DocumentDTO documentDto) {
-		Document document = new Document();
-		document.setFromDto(documentDto);
 		
-		documentService.insert(document);
+		extractHashTag(documentDto);	// 내용에서 태그 추출 후 태그 리스트를 dto에 담는다.
+		documentService.insert(documentDto);
 		return "redirect:/";
 	}
 
@@ -53,10 +55,9 @@ public class PageController {
 	public String editDocument(Model model,
 			@ModelAttribute DocumentDTO documentDto,
 			@RequestParam(value="page", defaultValue="0") int page) {
-		Document document = new Document();
-		document.setFromDto(documentDto);
 		
-		documentService.update(document);
+		extractHashTag(documentDto);	// 내용에서 태그 추출 후 태그 리스트를 dto에 담는다.
+		documentService.update(documentDto);
 		return "redirect:/" + documentDto.getId() + "?page="+page;
 	}
 
@@ -83,7 +84,8 @@ public class PageController {
 	@ApiOperation(value = "새 문서 페이지로 이동")
 	@RequestMapping(value="/new", method=RequestMethod.GET)
 	public String goNew(Model model) {
-		model.addAttribute("document", new DocumentDTO());
+		DocumentDTO dto = new DocumentDTO();
+		model.addAttribute("document", dto);
 		model.addAttribute("mode", "new");
 		return "regist";
 	}
@@ -98,5 +100,19 @@ public class PageController {
 		model.addAttribute("mode", "edit");
 		model.addAttribute("page", page);
 		return "regist";
+	}
+	
+	// 내용에서 해시태그 추출 후 태그 리스트를 dto에 담는다.
+	public void extractHashTag(DocumentDTO dto) {
+		Pattern p = Pattern.compile("\\#([0-9a-zA-Z가-힣_]*)");
+		Matcher m = p.matcher(dto.getContent());
+		String extractText = null;
+		
+		while(m.find()) {
+			extractText = m.group(1);
+			if(extractText != null) {
+				dto.addTag(new TagDTO(extractText));
+			}
+		}
 	}
 }

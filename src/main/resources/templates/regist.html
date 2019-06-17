@@ -6,7 +6,41 @@
 <th:block layout:fragment="script">
 <script type="text/javascript" th:inline="javascript">
 /*<![CDATA[*/ 
+var index = /*[[ ${document.photos_size} ]]*/;
+var j_index = 5*index;
+function addPhoto() {
+	var childHtml = "<li id='photo"+index+"'>"
+		+"<input type='text' class='input-photo-name' name='photos["+index+"].file_path' placeholder='파일 경로' required='required'>"
+		+"<input type='text' class='input-photo-name' name='photos["+index+"].file_name' placeholder='파일 이름' required='required'>"
+		+"<button type='button' class='btn btn-delete-photo' onclick='deletePhoto("+index+")'>사진 삭제</button>"
+		+"<ul id='photo-text-list'"+index+">"
+		+"</ul>"
+		+"<button type='button' class='btn' onclick='addText("+index+")'>텍스트 추가</button>"
+		+"</li>";
+	document.getElementById("photo-list").innerHTML += childHtml;
+	index++;
+}
+function deletePhoto(obj) {
+	var list = document.getElementById("photo-list");
+	var childNode = document.getElementById("photo"+obj);
+	list.removeChild(childNode);
+}
 
+function addText(obj) {
+	var childHtml = "<li id='photo-text"+j_index+"'>"
+		+"<input type='number' class='input-photo-text input-photo-position' name='photos["+obj+"].photo_texts["+j_index+"].position_x' placeholder='x좌표' required='required'>"
+		+"<input type='number' class='input-photo-text input-photo-position' name='photos["+obj+"].photo_texts["+j_index+"].position_y' placeholder='y좌표' required='required'>"
+		+"<input type='text' class='input-photo-text' name='photos["+obj+"].photo_texts["+j_index+"].text' placeholder='텍스트' required='required'>"
+		+"<button type='button' class='btn btn-delete-text' onclick='deleteText("+obj+","+j_index+")'>텍스트 삭제</button>";
+		+"</li>";
+	document.getElementById("photo-text-list"+obj).innerHTML += childHtml;
+	j_index++;
+}
+function deleteText(i, j) {
+	var list = document.getElementById("photo-text-list"+i);
+	var childNode = document.getElementById("photo-text"+j);
+	list.removeChild(childNode);
+}
 /*]]>*/
 </script>
 </th:block>
@@ -27,25 +61,30 @@
 					<td><textarea th:field="*{content}" required="required"></textarea></td>
 				</tr>
 				<tr>
-					<th>사진</th>
+					<th>사진
+						<div class="input-photo-box">
+							<button type="button" class="btn" onclick="addPhoto()">사진 추가</button>
+						</div>
+					</th>
 					<td>
-						<div class="photo-box">
-							<ol>
-								<!-- <th:block th:each="index: ${#numbers.sequence(1,5)}">
-							        <li><img th:src="'/images/PIXNIO-' + ${index} + '.jfif'" th:alt="'PIXNIO-' + ${index}" onclick=""></li>
-							    </th:block> -->
+						<div class="input-photo-box">
+							<ol id="photo-list">
 							    <th:block th:each="photo, i : *{photos}">
-							    	<li>
-				    					<input type="text" th:field="*{photos[__${i.index}__].file_name}" placeholder="사진">
-				    					<ul>
+							    	<li th:id="'photo'+${i.index}">
+				    					<input type="text" class="input-photo-name" th:field="*{photos[__${i.index}__].file_path}" placeholder="파일 경로" required="required">
+				    					<input type="text" class="input-photo-name" th:field="*{photos[__${i.index}__].file_name}" placeholder="파일 이름" required="required">
+				    					<button type="button" class="btn btn-delete-photo" th:onclick="'deletePhoto('+${i.index}+')'">사진 삭제</button>
+				    					<ul th:id="'photo-text-list'+${i.index}">
 				    						<th:block th:each="photo_text, j : *{photos[__${i.index}__].photo_texts}">
-				    							<li>
-				    								<input type="number" th:field="*{photos[__${i.index}__].photo_texts[__${j.index}__].position_x}" placeholder="x좌표">
-				    								<input type="number" th:field="*{photos[__${i.index}__].photo_texts[__${j.index}__].position_y}" placeholder="y좌표">
-				    								<input type="text" th:field="*{photos[__${i.index}__].photo_texts[__${j.index}__].text}" placeholder="텍스트">
+				    							<li th:id="'photo-text'+${j.index}">
+				    								<input type="number" class="input-photo-text input-photo-position" th:field="*{photos[__${i.index}__].photo_texts[__${j.index}__].position_x}" placeholder="x좌표" required="required">
+				    								<input type="number" class="input-photo-text input-photo-position" th:field="*{photos[__${i.index}__].photo_texts[__${j.index}__].position_y}" placeholder="y좌표" required="required">
+				    								<input type="text" class="input-photo-text" th:field="*{photos[__${i.index}__].photo_texts[__${j.index}__].text}" placeholder="텍스트" required="required">
+				    								<button type="button" class="btn btn-delete-text" th:onclick="'deleteText('+${i.index}+','+${j.index}+')'">텍스트 삭제</button>
 				    							</li>
 				    						</th:block>
 				    					</ul>
+				    					<button type="button" class="btn" th:onclick="'addText('+${i.index}+')'">텍스트 추가</button>
 							    	</li>
 							    </th:block>
 							</ol>
