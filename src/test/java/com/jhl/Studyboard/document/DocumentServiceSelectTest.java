@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +38,11 @@ public class DocumentServiceSelectTest {
 	@Before
 	public void insert() {
 		data = documentService.insert(DocumentData.initData());
+	}
+
+	@After
+	public void after() {
+		documentService.delete(data.getId());
 	}
 
 	@Test

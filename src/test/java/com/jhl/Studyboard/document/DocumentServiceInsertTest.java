@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +32,20 @@ public class DocumentServiceInsertTest {
 	@Autowired
 	private DocumentService documentService;
 
+	private Long savedDocumentId;
+
+	@After
+	public void after() {
+		documentService.delete(savedDocumentId);
+	}
+
 	@Test
 	public void insert() {
 		DocumentDTO data = DocumentData.initData();
 
 		// insert
 		Document saved = documentService.insert(data);
+		savedDocumentId = saved.getId();
 		
 		// document
 		assertThat(saved).isNotNull();

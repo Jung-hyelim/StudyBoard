@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +39,11 @@ public class DocumentServiceUpdateTest {
 	public void insert() {
 		Document saved = documentService.insert(DocumentData.initData());
 		savedDocumentId = saved.getId();
+	}
+	
+	@After
+	public void after() {
+		documentService.delete(savedDocumentId);
 	}
 
 	@Test
