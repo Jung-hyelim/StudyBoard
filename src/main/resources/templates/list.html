@@ -8,9 +8,9 @@
 				<tr>
 					<th>No.</th>
 					<th>제목</th>
-					<th>태그수</th>
-					<!-- <th>사진수</th>
-					<th>생성일</th> -->
+					<!-- <th>태그수</th> -->
+					<!-- <th>사진수</th> -->
+					<th>생성일</th>
 					<th>수정일</th>
 				</tr>
 			</thead>
@@ -18,8 +18,8 @@
 				<tr th:each="document : ${list}">
 					<td th:text="${document.id}">0</td>
 					<td><a th:href="@{/{id}(id=${document.id}, page=${page})}" th:text="${document.title}">TITLE</a></td>
-					<!-- <td th:text="${document.tags_size}"></td>
-					<td th:text="${document.photos_size}"></td> -->
+					<!-- <td th:text="${document.tags_size}"></td> -->
+					<!-- <td th:text="${document.photos_size}"></td> -->
 					<td th:text="${#temporals.format(document.create_date, 'yyyy-MM-dd HH:mm')}"></td>
 					<td th:text="${#temporals.format(document.update_date, 'yyyy-MM-dd HH:mm')}"></td>
 				</tr>
