@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorator="layout/default">
-
-<th:block layout:fragment="script">
+  data-layout-decorate="~{layout/default}">
+<head>
 <script type="text/javascript" th:inline="javascript">
 /*<![CDATA[*/ 
 var index = /*[[ ${document.photos_size} ]]*/;
@@ -43,7 +42,7 @@ function deleteText(i, j) {
 }
 /*]]>*/
 </script>
-</th:block>
+</head>
 
 	<div layout:fragment="mainFragment">
 		<form th:action="@{/(page=${page})}" role="form" th:object="${document}" method="post" id="document-form">

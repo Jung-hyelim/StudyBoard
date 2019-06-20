@@ -1,17 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
   xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorator="layout/default">
+  data-layout-decorate="~{layout/default}">
   
-<th:block layout:fragment="script">
-<script type="text/javascript" th:inline="javascript">
-/*<![CDATA[*/ 
-var id = /*[[ ${document.id} ]]*/;
-
-/*]]>*/
-</script>
-</th:block>
-
 	<div layout:fragment="mainFragment">
 		<table class="table" th:object="${document}">
 			<tr>
