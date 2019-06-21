@@ -1,11 +1,10 @@
 # StudyBoard
+게시판을 만들며 study합니다.
 
---
-## Server
+## 사용 Skill
 - Spring Boot 2.1.5
 - Java 8
 - JPA
 - MySQL
-
-## Front-end
 - thymeleaf
+- Docker
