@@ -5,7 +5,7 @@
 <head>
 <script type="text/javascript" th:inline="javascript">
 /*<![CDATA[*/ 
-var index = /*[[ ${document.photos_size} ]]*/;
+var index = /*[[ ${#lists.size(document.photos)} ]]*/;
 var j_index = 5*index;
 function addPhoto() {
 	var childHtml = "<li id='photo"+index+"'>"
