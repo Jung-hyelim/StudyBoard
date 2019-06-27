@@ -16,3 +16,8 @@ services:
     container_name: app-studyboard
     ports:
       - "8080:8080"
+  redis:
+    image: redis
+    container_name: redis-studyboard
+    ports:
+      - "6379:6379"

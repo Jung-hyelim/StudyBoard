@@ -7,4 +7,6 @@
 - JPA
 - MySQL
 - thymeleaf
+- H2 (테스트 환경 인메모리 DB)
 - Docker
+- Redis

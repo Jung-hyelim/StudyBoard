@@ -3,6 +3,8 @@ package com.jhl.StudyBoard.controller;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,12 +18,17 @@ import com.jhl.StudyBoard.dto.DocumentDTO;
 import com.jhl.StudyBoard.dto.DocumentListDTO;
 import com.jhl.StudyBoard.dto.TagDTO;
 import com.jhl.StudyBoard.service.DocumentService;
+import com.jhl.StudyBoard.service.RedisService;
 
+@Slf4j
 @Controller
 public class DocumentController {
 
 	@Autowired
 	private DocumentService documentService;
+	
+	@Autowired
+	private RedisService redisService;
 
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String goList(Model model,
@@ -65,7 +72,14 @@ public class DocumentController {
 	public String goShow(Model model,
 			@PathVariable("id") Long id,
 			@RequestParam(value="page", defaultValue="0") int page) {
-		DocumentDTO documentDto = documentService.select(id);
+
+		DocumentDTO documentDto = redisService.getRedis(id);
+		
+		if(documentDto == null) {
+			log.info("redis data is null");
+			documentDto = documentService.select(id);
+			redisService.setRedis(id, documentDto);
+		}
 		model.addAttribute("document", documentDto);
 		model.addAttribute("page", page);
 		return "show";
