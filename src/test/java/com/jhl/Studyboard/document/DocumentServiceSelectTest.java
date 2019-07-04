@@ -1,4 +1,4 @@
-package com.jhl.StudyBoard.document;
+package com.jhl.Studyboard.document;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.jhl.StudyBoard.data.DocumentData;
 import com.jhl.StudyBoard.dto.DocumentDTO;
 import com.jhl.StudyBoard.dto.PhotoDTO;
 import com.jhl.StudyBoard.dto.PhotoTextDTO;
@@ -24,6 +23,7 @@ import com.jhl.StudyBoard.entity.DocumentAndTag;
 import com.jhl.StudyBoard.entity.Photo;
 import com.jhl.StudyBoard.entity.PhotoText;
 import com.jhl.StudyBoard.service.DocumentService;
+import com.jhl.Studyboard.data.DocumentData;
 
 @RunWith(SpringRunner.class)
 @TestPropertySource("classpath:application-test.properties")

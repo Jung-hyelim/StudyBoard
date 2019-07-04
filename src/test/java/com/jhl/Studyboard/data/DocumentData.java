@@ -1,4 +1,4 @@
-package com.jhl.StudyBoard.data;
+package com.jhl.Studyboard.data;
 
 import com.jhl.StudyBoard.dto.DocumentDTO;
 import com.jhl.StudyBoard.dto.PhotoDTO;
