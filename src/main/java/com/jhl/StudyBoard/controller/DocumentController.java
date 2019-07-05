@@ -40,10 +40,8 @@ public class DocumentController {
 		if(result == null) {
 			log.debug("redis list is null");
 			result = documentService.selectList(page, LIST_SIZE);
-			redisService.setDocumentListRedis(page, result);
+//			redisService.setDocumentListRedis(page, result);	// event listener에서 처리
 		}
-		
-//		DocumentListDTO result = documentService.selectList(page, LIST_SIZE);
 		
 		model.addAttribute("list", result.getList());
 		model.addAttribute("totalPage", result.getTotalPages());
@@ -88,7 +86,7 @@ public class DocumentController {
 		if(documentDto == null) {
 			log.info("redis data is null");
 			documentDto = documentService.select(id);
-			redisService.setDocumentRedis(id, documentDto);
+//			redisService.setDocumentRedis(id, documentDto);	// event listener에서 처리
 		}
 		model.addAttribute("document", documentDto);
 		model.addAttribute("page", page);

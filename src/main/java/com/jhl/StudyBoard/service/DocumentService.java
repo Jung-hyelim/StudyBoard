@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -27,6 +28,9 @@ public class DocumentService {
 	@Autowired
 	private TagRepository tagRepository;
 	
+	@Autowired
+	private ApplicationEventPublisher publisher;
+	
 	@Transactional(readOnly=false)
 	public Document insert(DocumentDTO documentDto) {
 		Document document = new Document();
@@ -44,7 +48,14 @@ public class DocumentService {
 	@Transactional(readOnly=true)
 	public DocumentListDTO selectList(int page, int size) {
 		Page<Document> document = documentRepository.findAll(new PageRequest(page, size, Direction.DESC, "id"));
-		return new DocumentListDTO(document);
+		
+		// DTO
+		DocumentListDTO list = new DocumentListDTO(document);
+		
+		// Event publish
+		publisher.publishEvent(list);
+		
+		return list;
 	}
 	
 	@Transactional(readOnly=true)
@@ -55,6 +66,10 @@ public class DocumentService {
 		
 		// DTO
 		DocumentDTO dto = new DocumentDTO(document);
+		
+		// Event publish
+		publisher.publishEvent(dto);
+		
 		return dto;
 	}
 	
