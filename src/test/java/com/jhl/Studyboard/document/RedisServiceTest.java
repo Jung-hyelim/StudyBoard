@@ -2,9 +2,9 @@ package com.jhl.Studyboard.document;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jhl.StudyBoard.dto.DocumentDTO;
+import com.jhl.StudyBoard.dto.DocumentListDTO;
+import com.jhl.StudyBoard.dto.DocumentListItemDTO;
 import com.jhl.StudyBoard.dto.PhotoDTO;
 import com.jhl.StudyBoard.dto.PhotoTextDTO;
 import com.jhl.StudyBoard.dto.TagDTO;
@@ -32,20 +34,14 @@ public class RedisServiceTest {
 	@Value("${spring.redis.expireTime}")
 	private long redisExpireTime;
 
-	private DocumentDTO data;
-	
-	@Before
-	public void 테스트데이터셋팅() {
-		data = DocumentData.initData();
-		data.setId(99L);
-	}
-	
 	@Test
 	public void 레디스에데이터저장_후_가져오기_5초후_레디스데이터파기() {
+		DocumentDTO data = DocumentData.initData();
+		data.setId(99L);
 		
-		redisService.setRedis(data.getId(), data);
+		redisService.setDocumentRedis(data.getId(), data);
 
-		DocumentDTO get = redisService.getRedis(data.getId());
+		DocumentDTO get = redisService.getDocumentRedis(data.getId());
 		assertThat(get.getId()).isEqualTo(data.getId());
 		assertThat(get.getTitle()).isEqualTo(data.getTitle());
 		assertThat(get.getContent()).isEqualTo(data.getContent());
@@ -84,7 +80,54 @@ public class RedisServiceTest {
 			e.printStackTrace();
 		}
 		
-		DocumentDTO afterSleep = redisService.getRedis(data.getId());
+		DocumentDTO afterSleep = redisService.getDocumentRedis(data.getId());
+		assertThat(afterSleep).isNull();
+	}
+	
+	@Test
+	public void 레디스에리스트_저장() {
+		int page = 1;
+		DocumentListItemDTO data1 = DocumentListItemDTO.builder()
+										.id(88L)
+										.title("title1")
+										.content("content1")
+										.build();
+		DocumentListItemDTO data2 = DocumentListItemDTO.builder()
+										.id(77L)
+										.title("title2")
+										.content("content2")
+										.build();
+		List<DocumentListItemDTO> listData = new ArrayList<DocumentListItemDTO>();
+		listData.add(data1);
+		listData.add(data2);
+		
+		DocumentListDTO list = new DocumentListDTO();
+		list.setPage(page);
+		list.setTotalPages(page);
+		list.setList(listData);
+		
+		redisService.setDocumentListRedis(page, list);
+		
+		DocumentListDTO get = redisService.getDocumentListRedis(page);
+		assertThat(get).isNotNull();
+		assertThat(get.getPage()).isEqualTo(list.getPage());
+		assertThat(get.getTotalPages()).isEqualTo(list.getTotalPages());
+		assertThat(get.getList().size()).isEqualTo(list.getList().size());
+		for(int i = 0; i < get.getList().size(); i++) {
+			DocumentListItemDTO getItem = get.getList().get(i);
+			DocumentListItemDTO listItem = list.getList().get(i);
+			assertThat(getItem.getId()).isEqualTo(listItem.getId());
+			assertThat(getItem.getTitle()).isEqualTo(listItem.getTitle());
+			assertThat(getItem.getContent()).isEqualTo(listItem.getContent());
+		}
+
+		try {
+			Thread.sleep(redisExpireTime*1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		DocumentListDTO afterSleep = redisService.getDocumentListRedis(page);
 		assertThat(afterSleep).isNull();
 	}
 }

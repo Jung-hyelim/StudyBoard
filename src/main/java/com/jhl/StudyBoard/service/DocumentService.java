@@ -54,8 +54,7 @@ public class DocumentService {
 		Hibernate.initialize(document.getMappings());
 		
 		// DTO
-		DocumentDTO dto = new DocumentDTO();
-		dto.setFromEntity(document);
+		DocumentDTO dto = new DocumentDTO(document);
 		return dto;
 	}
 	

@@ -12,6 +12,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
 
 import com.jhl.StudyBoard.dto.DocumentDTO;
+import com.jhl.StudyBoard.dto.DocumentListDTO;
 
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport {
@@ -45,6 +46,17 @@ public class RedisConfig extends CachingConfigurerSupport {
 		redisTemplate.setConnectionFactory(connectionFactory());
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
 		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<DocumentDTO>(DocumentDTO.class));
+		redisTemplate.setEnableDefaultSerializer(false);
+		redisTemplate.setEnableTransactionSupport(true);
+		return redisTemplate;
+	}
+	
+	@Bean(name="redisTemplate-list")
+	public RedisTemplate<String, Object> redisTemplate2() {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(connectionFactory());
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<DocumentListDTO>(DocumentListDTO.class));
 		redisTemplate.setEnableDefaultSerializer(false);
 		redisTemplate.setEnableTransactionSupport(true);
 		return redisTemplate;

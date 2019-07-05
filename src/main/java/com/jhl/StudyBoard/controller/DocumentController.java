@@ -24,6 +24,8 @@ import com.jhl.StudyBoard.service.RedisService;
 @Controller
 public class DocumentController {
 
+	private static final int LIST_SIZE = 10;
+	
 	@Autowired
 	private DocumentService documentService;
 	
@@ -32,9 +34,17 @@ public class DocumentController {
 
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String goList(Model model,
-			@RequestParam(value="page", defaultValue="0") int page, 
-			@RequestParam(value="size", required=false, defaultValue="10") int size) {
-		DocumentListDTO result = documentService.selectList(page, size);
+			@RequestParam(value="page", defaultValue="0") int page) {
+		DocumentListDTO result = redisService.getDocumentListRedis(page);
+		
+		if(result == null) {
+			log.debug("redis list is null");
+			result = documentService.selectList(page, LIST_SIZE);
+			redisService.setDocumentListRedis(page, result);
+		}
+		
+//		DocumentListDTO result = documentService.selectList(page, LIST_SIZE);
+		
 		model.addAttribute("list", result.getList());
 		model.addAttribute("totalPage", result.getTotalPages());
 		model.addAttribute("page", result.getPage());
@@ -73,12 +83,12 @@ public class DocumentController {
 			@PathVariable("id") Long id,
 			@RequestParam(value="page", defaultValue="0") int page) {
 
-		DocumentDTO documentDto = redisService.getRedis(id);
+		DocumentDTO documentDto = redisService.getDocumentRedis(id);
 		
 		if(documentDto == null) {
 			log.info("redis data is null");
 			documentDto = documentService.select(id);
-			redisService.setRedis(id, documentDto);
+			redisService.setDocumentRedis(id, documentDto);
 		}
 		model.addAttribute("document", documentDto);
 		model.addAttribute("page", page);

@@ -5,23 +5,23 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.jhl.StudyBoard.entity.Document;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import com.jhl.StudyBoard.entity.Document;
 
 @Getter
 @Setter
 @NoArgsConstructor
 public class DocumentListDTO {
 
-	List<Document> list = new ArrayList<Document>();
+	List<DocumentListItemDTO> list = new ArrayList<DocumentListItemDTO>();
 	private int totalPages;
 	private int page;
 
 	public DocumentListDTO(Page<Document> document) {
-		this.list = document.getContent();
+		document.getContent().stream().forEach(d -> this.list.add(new DocumentListItemDTO(d)));
 		this.totalPages = document.getTotalPages();
 		this.page = document.getNumber();
 	}
