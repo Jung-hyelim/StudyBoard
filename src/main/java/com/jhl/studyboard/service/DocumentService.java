@@ -1,5 +1,6 @@
 package com.jhl.studyboard.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -8,6 +9,7 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.redis.core.ValueOperations;
@@ -54,17 +56,24 @@ public class DocumentService {
 	}
 	
 	@Transactional(readOnly=true)
-	public Page<Document> selectList(int page, int size) {
-		Page<Document> list = documentRepository.findAll(PageRequest.of(page, size, Direction.DESC, "id"));
-		return list;
+	public Page<DocumentDTO> selectList(int page, int size) {
+		Page<Long> list = documentRepository.findAllOnlyId(PageRequest.of(page, size, Direction.DESC, "id"));
+		
+		List<DocumentDTO> dtoList = new ArrayList<DocumentDTO>();
+		list.stream().forEach(id -> dtoList.add(select(id)));
+		// TODO : redis에서 데이터를 가져올때 multiGet으로 가져오기
+		
+		Page<DocumentDTO> result = new PageImpl<DocumentDTO>(dtoList, list.getPageable(), list.getTotalElements());
+		return result;
 	}
 	
 	@Transactional(readOnly=true)
 	public DocumentDTO select(long id) {
-		DocumentDTO documentDto = redisDocument.get(RedisConfig.DOCUMENT_KEY_PREFIX + String.valueOf(id));
 		log.debug("get documentDTO from redis [id:{}]", id);
+		DocumentDTO documentDto = redisDocument.get(RedisConfig.DOCUMENT_KEY_PREFIX + String.valueOf(id));
 		
 		if(documentDto == null) {
+			log.debug("redis data - documentDTO is null [id:{}]", id);
 			Document document = documentRepository.findById(id).orElseThrow(() -> new DocumentNotFoundException("no data in findById"));
 			document.getPhotos().stream().forEach(p -> Hibernate.initialize(p.getPhoto_texts()));
 			Hibernate.initialize(document.getMappings());

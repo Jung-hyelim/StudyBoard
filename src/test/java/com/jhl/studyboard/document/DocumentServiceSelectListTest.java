@@ -13,7 +13,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jhl.studyboard.dto.DocumentDTO;
-import com.jhl.studyboard.entity.Document;
 import com.jhl.studyboard.service.DocumentService;
 
 @RunWith(SpringRunner.class)
@@ -25,6 +24,7 @@ public class DocumentServiceSelectListTest {
 	private DocumentService documentService;
 
 	final int PAGE_SIZE = 3;
+	final int TOTAL_COUNT = 5;
 
 	DocumentDTO document1 = new DocumentDTO();
 	DocumentDTO document2 = new DocumentDTO();
@@ -54,17 +54,24 @@ public class DocumentServiceSelectListTest {
 
 	@Test
 	public void selectList() {
-		Page<Document> list1 = documentService.selectList(0, PAGE_SIZE);
-		assertThat(list1.getContent()).isNotEmpty();
-		assertThat(list1.getContent().size()).isEqualTo(PAGE_SIZE);
-		assertThat(list1.getContent().get(0).getTitle()).isEqualTo(document5.getTitle());
-		assertThat(list1.getContent().get(0).getContent()).isEqualTo(document5.getContent());
+		int pageNumber = 0;
+		Page<DocumentDTO> list = documentService.selectList(pageNumber, PAGE_SIZE);
+		assertThat(list.getPageable()).isNotNull();
+		assertThat(list.getNumber()).isEqualTo(pageNumber);
+		assertThat(list.getTotalPages()).isEqualTo((TOTAL_COUNT / PAGE_SIZE) + 1);
+		assertThat(list.getContent()).isNotEmpty();
+		assertThat(list.getContent().size()).isEqualTo(PAGE_SIZE);
 		
-		Page<Document> list2 = documentService.selectList(1, PAGE_SIZE);
-		assertThat(list2.getContent()).isNotEmpty();
-		assertThat(list2.getContent().size()).isNotEqualTo(PAGE_SIZE);
+		pageNumber = 1;
+		list = documentService.selectList(pageNumber, PAGE_SIZE);
+		assertThat(list.getPageable()).isNotNull();
+		assertThat(list.getNumber()).isEqualTo(pageNumber);
+		assertThat(list.getTotalPages()).isEqualTo((TOTAL_COUNT / PAGE_SIZE) + 1);
+		assertThat(list.getContent()).isNotEmpty();
+		assertThat(list.getContent().size()).isNotEqualTo(PAGE_SIZE);
 		
-		Page<Document> list3 = documentService.selectList(2, PAGE_SIZE);
-		assertThat(list3.getContent()).isEmpty();
+		pageNumber = 2;
+		list = documentService.selectList(pageNumber, PAGE_SIZE);
+		assertThat(list.getContent()).isEmpty();
 	}
 }

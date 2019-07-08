@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.jhl.studyboard.dto.DocumentDTO;
 import com.jhl.studyboard.dto.TagDTO;
-import com.jhl.studyboard.entity.Document;
 import com.jhl.studyboard.service.DocumentService;
 
 @Controller
@@ -29,7 +28,7 @@ public class DocumentController {
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String goList(Model model,
 			@RequestParam(value="page", defaultValue="0") int page) {
-		Page<Document> result = documentService.selectList(page, LIST_SIZE);
+		Page<DocumentDTO> result = documentService.selectList(page, LIST_SIZE);
 		model.addAttribute("list", result.getContent());
 		model.addAttribute("totalPage", result.getTotalPages());
 		model.addAttribute("page", result.getNumber());
