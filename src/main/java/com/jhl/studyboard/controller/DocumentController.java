@@ -3,9 +3,8 @@ package com.jhl.studyboard.controller;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,12 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.jhl.studyboard.dto.DocumentDTO;
-import com.jhl.studyboard.dto.DocumentListDTO;
 import com.jhl.studyboard.dto.TagDTO;
+import com.jhl.studyboard.entity.Document;
 import com.jhl.studyboard.service.DocumentService;
-import com.jhl.studyboard.service.RedisService;
 
-@Slf4j
 @Controller
 public class DocumentController {
 
@@ -29,23 +26,13 @@ public class DocumentController {
 	@Autowired
 	private DocumentService documentService;
 	
-	@Autowired
-	private RedisService redisService;
-
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public String goList(Model model,
 			@RequestParam(value="page", defaultValue="0") int page) {
-		DocumentListDTO result = redisService.getDocumentListRedis(page);
-		
-		if(result == null) {
-			log.debug("redis list is null");
-			result = documentService.selectList(page, LIST_SIZE);
-//			redisService.setDocumentListRedis(page, result);	// event listener에서 처리
-		}
-		
-		model.addAttribute("list", result.getList());
+		Page<Document> result = documentService.selectList(page, LIST_SIZE);
+		model.addAttribute("list", result.getContent());
 		model.addAttribute("totalPage", result.getTotalPages());
-		model.addAttribute("page", result.getPage());
+		model.addAttribute("page", result.getNumber());
 		return "list";
 	}
 
@@ -80,14 +67,7 @@ public class DocumentController {
 	public String goShow(Model model,
 			@PathVariable("id") Long id,
 			@RequestParam(value="page", defaultValue="0") int page) {
-
-		DocumentDTO documentDto = redisService.getDocumentRedis(id);
-		
-		if(documentDto == null) {
-			log.info("redis data is null");
-			documentDto = documentService.select(id);
-//			redisService.setDocumentRedis(id, documentDto);	// event listener에서 처리
-		}
+		DocumentDTO documentDto = documentService.select(id);
 		model.addAttribute("document", documentDto);
 		model.addAttribute("page", page);
 		return "show";

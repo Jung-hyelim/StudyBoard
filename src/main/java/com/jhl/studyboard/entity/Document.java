@@ -77,7 +77,6 @@ public class Document {
 			p.setDocument(this);
 			this.photos.add(p);
 		});
-		//this.photos.addAll(document.getPhotos());
 		
 		// tag mapping
 		document.getMappings().stream().forEach(m -> m.setDocument(this));
@@ -92,7 +91,7 @@ public class Document {
 		this.mappings.addAll(documentAndTag);
 	}
 	
-	public void setFromDto(DocumentDTO dto) {
+	public Document(DocumentDTO dto) {
 		this.id = dto.getId();
 		this.title = dto.getTitle();
 		this.content = dto.getContent();

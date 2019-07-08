@@ -8,11 +8,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jhl.studyboard.dto.DocumentDTO;
-import com.jhl.studyboard.dto.DocumentListDTO;
+import com.jhl.studyboard.entity.Document;
 import com.jhl.studyboard.service.DocumentService;
 
 @RunWith(SpringRunner.class)
@@ -53,17 +54,17 @@ public class DocumentServiceSelectListTest {
 
 	@Test
 	public void selectList() {
-		DocumentListDTO list1 = documentService.selectList(0, PAGE_SIZE);
-		assertThat(list1.getList()).isNotEmpty();
-		assertThat(list1.getList().size()).isEqualTo(PAGE_SIZE);
-		assertThat(list1.getList().get(0).getTitle()).isEqualTo(document5.getTitle());
-		assertThat(list1.getList().get(0).getContent()).isEqualTo(document5.getContent());
+		Page<Document> list1 = documentService.selectList(0, PAGE_SIZE);
+		assertThat(list1.getContent()).isNotEmpty();
+		assertThat(list1.getContent().size()).isEqualTo(PAGE_SIZE);
+		assertThat(list1.getContent().get(0).getTitle()).isEqualTo(document5.getTitle());
+		assertThat(list1.getContent().get(0).getContent()).isEqualTo(document5.getContent());
 		
-		DocumentListDTO list2 = documentService.selectList(1, PAGE_SIZE);
-		assertThat(list2.getList()).isNotEmpty();
-		assertThat(list2.getList().size()).isNotEqualTo(PAGE_SIZE);
+		Page<Document> list2 = documentService.selectList(1, PAGE_SIZE);
+		assertThat(list2.getContent()).isNotEmpty();
+		assertThat(list2.getContent().size()).isNotEqualTo(PAGE_SIZE);
 		
-		DocumentListDTO list3 = documentService.selectList(2, PAGE_SIZE);
-		assertThat(list3.getList()).isEmpty();
+		Page<Document> list3 = documentService.selectList(2, PAGE_SIZE);
+		assertThat(list3.getContent()).isEmpty();
 	}
 }
