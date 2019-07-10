@@ -68,7 +68,7 @@ public class DocumentServiceSelectListTest {
 		assertThat(list.getNumber()).isEqualTo(pageNumber);
 		assertThat(list.getTotalPages()).isEqualTo((TOTAL_COUNT / PAGE_SIZE) + 1);
 		assertThat(list.getContent()).isNotEmpty();
-		assertThat(list.getContent().size()).isNotEqualTo(PAGE_SIZE);
+		assertThat(list.getContent().size()).isEqualTo(TOTAL_COUNT - PAGE_SIZE);
 		
 		pageNumber = 2;
 		list = documentService.selectList(pageNumber, PAGE_SIZE);

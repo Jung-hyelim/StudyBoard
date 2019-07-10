@@ -12,4 +12,5 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 	@Query(value = "select d.id from Document d",
 			countQuery = "select count(d.id) from Document d")
 	Page<Long> findAllOnlyId(Pageable pageable);
+	
 }

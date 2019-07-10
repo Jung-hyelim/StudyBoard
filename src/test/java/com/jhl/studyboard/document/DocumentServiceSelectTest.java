@@ -20,9 +20,6 @@ import com.jhl.studyboard.dto.PhotoDTO;
 import com.jhl.studyboard.dto.PhotoTextDTO;
 import com.jhl.studyboard.dto.TagDTO;
 import com.jhl.studyboard.entity.Document;
-import com.jhl.studyboard.entity.DocumentAndTag;
-import com.jhl.studyboard.entity.Photo;
-import com.jhl.studyboard.entity.PhotoText;
 import com.jhl.studyboard.service.DocumentService;
 
 @RunWith(SpringRunner.class)
@@ -33,11 +30,12 @@ public class DocumentServiceSelectTest {
 	@Autowired
 	private DocumentService documentService;
 
-	private Document data;
+	private DocumentDTO data;
 	
 	@Before
 	public void insert() {
-		data = documentService.insert(DocumentData.initData());
+		Document initData = documentService.insert(DocumentData.initData());
+		data = new DocumentDTO(initData);
 	}
 
 	@After
@@ -58,7 +56,7 @@ public class DocumentServiceSelectTest {
 		
 		// photos
 		List<PhotoDTO> selectedPhotos = selected.getPhotos();
-		List<Photo> dataPhotos = data.getPhotos();
+		List<PhotoDTO> dataPhotos = data.getPhotos();
 		assertThat(selectedPhotos).isNotEmpty();
 		assertThat(selectedPhotos.size()).isEqualTo(dataPhotos.size());
 		for(int i = 0; i < selectedPhotos.size(); i++){
@@ -67,7 +65,7 @@ public class DocumentServiceSelectTest {
 			
 			// photo texts
 			List<PhotoTextDTO> selectedPhotoTexts = selectedPhotos.get(i).getPhoto_texts();
-			List<PhotoText> dataPhotoTexts = dataPhotos.get(i).getPhoto_texts();
+			List<PhotoTextDTO> dataPhotoTexts = dataPhotos.get(i).getPhoto_texts();
 			assertThat(selectedPhotoTexts).isNotNull();
 			assertThat(selectedPhotoTexts.size()).isEqualTo(dataPhotoTexts.size());
 			for(int j = 0; j < selectedPhotoTexts.size(); j++){
@@ -79,11 +77,11 @@ public class DocumentServiceSelectTest {
 		
 		// tags
 		List<TagDTO> selectedTags = selected.getTags();
-		List<DocumentAndTag> dataMappings = data.getMappings();
+		List<TagDTO> dataTags = data.getTags();
 		assertThat(selectedTags).isNotEmpty();
-		assertThat(selectedTags.size()).isEqualTo(dataMappings.size());
+		assertThat(selectedTags.size()).isEqualTo(dataTags.size());
 		for(int i = 0; i < selectedTags.size(); i++){
-			assertThat(selectedTags.get(i).getName()).isEqualTo(dataMappings.get(i).getTag().getName());
+			assertThat(selectedTags.get(i).getName()).isEqualTo(dataTags.get(i).getName());
 		}
 	}
 }

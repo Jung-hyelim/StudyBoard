@@ -8,15 +8,11 @@ import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration.JedisClientConfigurationBuilder;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import com.jhl.studyboard.dto.DocumentDTO;
 
 @Configuration
 public class RedisConfig {
-
-	public static final String DOCUMENT_KEY_PREFIX = "documentDTO:";
 
 	@Value("${spring.redis.host}")
 	private String redisHost;
@@ -31,13 +27,13 @@ public class RedisConfig {
 		JedisConnectionFactory jedisConFactory = new JedisConnectionFactory(redisStandaloneConfiguration, jedisClientConfiguration.build());
 		return jedisConFactory;
 	}
-
+	
 	@Bean(name = "redisTemplate")
 	public RedisTemplate<String, Object> redisTemplate() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(connectionFactory());
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<DocumentDTO>(DocumentDTO.class));
+		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 		redisTemplate.setEnableDefaultSerializer(false);
 		redisTemplate.setEnableTransactionSupport(true);
 		return redisTemplate;
