@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.jhl.studyboard.dto.TagDTO;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +33,10 @@ public class DocumentAndTag {
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "tag_id")
 	private Tag tag;
+	
+	public DocumentAndTag(TagDTO tagDto) {
+		this.tag = new Tag(tagDto);
+	}
 	
 	public void setDocument(Document document) {
 		this.document = document;

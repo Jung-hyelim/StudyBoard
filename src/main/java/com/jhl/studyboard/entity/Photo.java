@@ -2,6 +2,7 @@ package com.jhl.studyboard.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.jhl.studyboard.dto.PhotoDTO;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,6 +52,13 @@ public class Photo {
 		this.document = document;
 		this.file_path = file_path;
 		this.file_name = file_name;
+	}
+	
+	public Photo(PhotoDTO dto) {
+		this.file_path = dto.getFile_path();
+		this.file_name = dto.getFile_name();
+		this.photo_texts = dto.getPhoto_texts().stream().map(PhotoText::new).collect(Collectors.toList());
+		this.photo_texts.stream().forEach(photo_text -> photo_text.setPhoto(this));
 	}
 	
 	public void setDocument(Document document) {

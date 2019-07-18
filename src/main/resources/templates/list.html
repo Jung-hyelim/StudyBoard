@@ -8,6 +8,7 @@
 				<tr>
 					<th>No.</th>
 					<th>제목</th>
+					<th>조회수</th>
 					<th>태그수</th>
 					<th>사진수</th>
 					<th>생성일</th>
@@ -18,6 +19,7 @@
 				<tr th:each="document : ${list}">
 					<td th:text="${document.id}">0</td>
 					<td><a th:href="@{/{id}(id=${document.id}, page=${page})}" th:text="${document.title}">TITLE</a></td>
+					<td th:text="${document.read_count}"></td>
 					<td th:text="${#lists.size(document.tags)}"></td>
 					<td th:text="${#lists.size(document.photos)}"></td>
 					<td th:text="${#temporals.format(document.create_date, 'yyyy-MM-dd HH:mm')}"></td>

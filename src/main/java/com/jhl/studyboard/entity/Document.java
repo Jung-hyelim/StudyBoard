@@ -3,6 +3,7 @@ package com.jhl.studyboard.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,18 +15,21 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.jhl.studyboard.dto.DocumentDTO;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "document")
 @Getter
 @NoArgsConstructor
+@DynamicInsert
 public class Document {
 
 	@Id
@@ -46,6 +50,9 @@ public class Document {
 	@UpdateTimestamp
 	private LocalDateTime update_date;
 
+	@Column @ColumnDefault(value = "0")
+	private Integer read_count;
+	
 	@OneToMany(mappedBy = "document", 
 			fetch = FetchType.LAZY, 
 			cascade = CascadeType.ALL, 
@@ -95,21 +102,10 @@ public class Document {
 		this.id = dto.getId();
 		this.title = dto.getTitle();
 		this.content = dto.getContent();
-		
-		dto.getPhotos().stream().forEach(p -> {
-			if(p.getFile_name() != null){
-				Photo photo = new Photo(null, this, p.getFile_path(), p.getFile_name());
-				p.getPhoto_texts().stream().forEach(t -> {
-					if(t.getText() != null && !t.getText().equals("")){
-						photo.addText(new PhotoText(null, photo, t.getPosition_x(), t.getPosition_y(), t.getText()));
-					}
-				});
-				this.photos.add(photo);
-			}
-		});
-		
-		dto.getTags().stream().forEach(t -> {
-			this.mappings.add(new DocumentAndTag(null, this, new Tag(null, t.getName())));
-		});
+		this.read_count = dto.getRead_count();
+		this.photos = dto.getPhotos().stream().map(Photo::new).collect(Collectors.toList());
+		this.photos.stream().forEach(photo -> photo.setDocument(this));
+		this.mappings = dto.getTags().stream().map(DocumentAndTag::new).collect(Collectors.toList());
+		this.mappings.stream().forEach(mapping -> mapping.setDocument(this));
 	}
 }

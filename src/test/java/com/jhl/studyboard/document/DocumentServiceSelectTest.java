@@ -53,6 +53,7 @@ public class DocumentServiceSelectTest {
 		assertThat(selected.getId()).isEqualTo(data.getId());
 		assertThat(selected.getTitle()).isEqualTo(data.getTitle());
 		assertThat(selected.getContent()).isEqualTo(data.getContent());
+		assertThat(selected.getRead_count()).isGreaterThan(0);
 		
 		// photos
 		List<PhotoDTO> selectedPhotos = selected.getPhotos();

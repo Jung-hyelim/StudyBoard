@@ -3,6 +3,7 @@ package com.jhl.studyboard.dto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -31,6 +32,7 @@ public class DocumentDTO {
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime update_date;
+	private Integer read_count;
 	private List<PhotoDTO> photos = new ArrayList<PhotoDTO>();
 	private List<TagDTO> tags = new ArrayList<TagDTO>();
 
@@ -42,31 +44,25 @@ public class DocumentDTO {
 	}
 	
 	public DocumentDTO(Document document) {
-		this.setId(document.getId());
-		this.setTitle(document.getTitle());
-		this.setContent(document.getContent());
-		this.setCreate_date(document.getCreate_date());
-		this.setUpdate_date(document.getUpdate_date());
-		document.getPhotos().stream().forEach(p -> {
-			PhotoDTO photoDto = new PhotoDTO(p.getFile_path(), p.getFile_name());
-			p.getPhoto_texts().stream().forEach(t -> photoDto.addText(new PhotoTextDTO(t.getPosition_x(), t.getPosition_y(), t.getText())));
-			this.addPhoto(photoDto);
-		});
-		document.getMappings().stream().forEach(m -> this.addTag(new TagDTO(m.getTag().getName())));
+		this.id = document.getId();
+		this.title = document.getTitle();
+		this.content = document.getContent();
+		this.create_date = document.getCreate_date();
+		this.update_date = document.getUpdate_date();
+		this.read_count = document.getRead_count();
+		this.photos = document.getPhotos().stream().map(PhotoDTO::new).collect(Collectors.toList());
+		this.tags = document.getMappings().stream().map(TagDTO::new).collect(Collectors.toList());
 	}
 	
 	public DocumentDTO(DocumentDTO document) {
-		this.setId(document.getId());
-		this.setTitle(document.getTitle());
-		this.setContent(document.getContent());
-		this.setCreate_date(document.getCreate_date());
-		this.setUpdate_date(document.getUpdate_date());
-		document.getPhotos().stream().forEach(p -> {
-			PhotoDTO photoDto = new PhotoDTO(p.getFile_path(), p.getFile_name());
-			p.getPhoto_texts().stream().forEach(t -> photoDto.addText(new PhotoTextDTO(t.getPosition_x(), t.getPosition_y(), t.getText())));
-			this.addPhoto(photoDto);
-		});
-		document.getTags().stream().forEach(m -> this.addTag(new TagDTO(m.getName())));
+		this.id = document.getId();
+		this.title = document.getTitle();
+		this.content = document.getContent();
+		this.create_date = document.getCreate_date();
+		this.update_date = document.getUpdate_date();
+		this.read_count = document.getRead_count();
+		this.photos = document.getPhotos().stream().map(PhotoDTO::new).collect(Collectors.toList());
+		this.tags = document.getTags().stream().map(TagDTO::new).collect(Collectors.toList());
 	}
 	
 	public String redisKey() {

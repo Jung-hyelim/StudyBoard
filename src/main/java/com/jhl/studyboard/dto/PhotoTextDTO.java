@@ -1,5 +1,7 @@
 package com.jhl.studyboard.dto;
 
+import com.jhl.studyboard.entity.PhotoText;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,4 +17,15 @@ public class PhotoTextDTO {
 	private double position_y;
 	private String text;
 	
+	public PhotoTextDTO(PhotoText photoText) {
+		this.position_x = photoText.getPosition_x();
+		this.position_y = photoText.getPosition_y();
+		this.text = photoText.getText();
+	}
+	
+	public PhotoTextDTO(PhotoTextDTO photoText) {
+		this.position_x = photoText.getPosition_x();
+		this.position_y = photoText.getPosition_y();
+		this.text = photoText.getText();
+	}
 }

@@ -80,7 +80,7 @@ public class DocumentService {
 		if(documentDto == null) {
 			documentDto = this.selectAndEventPulish(id);
 		}
-		
+
 		return documentDto;
 	}
 	

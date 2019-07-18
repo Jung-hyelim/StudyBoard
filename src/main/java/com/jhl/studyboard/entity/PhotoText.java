@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.jhl.studyboard.dto.PhotoTextDTO;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -41,6 +43,12 @@ public class PhotoText {
 		this.position_x = x;
 		this.position_y = y;
 		this.text = text;
+	}
+	
+	public PhotoText(PhotoTextDTO dto) {
+		this.position_x = dto.getPosition_x();
+		this.position_y = dto.getPosition_y();
+		this.text = dto.getText();
 	}
 	
 	public void setPhoto(Photo photo) {

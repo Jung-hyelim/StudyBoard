@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.jhl.studyboard.dto.TagDTO;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +35,11 @@ public class Tag {
 	public Tag(Long id, String name) {
 		this.id = id;
 		this.name = name;
+	}
+	
+	public Tag(TagDTO dto) {
+		this.id = dto.getId();
+		this.name = dto.getName();
 	}
 	
 	public void setId(Long id) {
