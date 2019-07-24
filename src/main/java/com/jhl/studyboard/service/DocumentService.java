@@ -40,7 +40,7 @@ public class DocumentService {
 
 	@Resource(name = "redisTemplate")
 	private ValueOperations<String, DocumentDTO> redisDocument;
-	
+
 	@Transactional(readOnly=false)
 	public Document insert(DocumentDTO documentDto) {
 		Document document = new Document(documentDto);
@@ -72,8 +72,10 @@ public class DocumentService {
 		return result;
 	}
 	
-	@Transactional(readOnly=true)
+	@Transactional(readOnly=false)
 	public DocumentDTO select(long id) {
+		documentRepository.updateReadCount(id, 1);
+		
 		log.debug("get documentDTO from redis [id:{}]", id);
 		DocumentDTO documentDto = redisDocument.get(DocumentDTO.REDIS_KEY_PREFIX + String.valueOf(id));
 		
