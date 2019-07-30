@@ -11,3 +11,4 @@
 - JUnit
 - Docker
 - Redis
+- kafka

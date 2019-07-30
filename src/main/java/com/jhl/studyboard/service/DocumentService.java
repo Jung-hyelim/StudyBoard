@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,9 @@ public class DocumentService {
 
 	@Resource(name = "redisTemplate")
 	private ValueOperations<String, DocumentDTO> redisDocument;
+	
+	@Autowired
+	private KafkaTemplate<String, Long> kafkaTemplate;
 
 	@Transactional(readOnly=false)
 	public Document insert(DocumentDTO documentDto) {
@@ -72,9 +76,9 @@ public class DocumentService {
 		return result;
 	}
 	
-	@Transactional(readOnly=false)
+	@Transactional(readOnly=true)
 	public DocumentDTO select(long id) {
-		documentRepository.updateReadCount(id, 1);
+		kafkaTemplate.send("document-read", id);
 		
 		log.debug("get documentDTO from redis [id:{}]", id);
 		DocumentDTO documentDto = redisDocument.get(DocumentDTO.REDIS_KEY_PREFIX + String.valueOf(id));
