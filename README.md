@@ -6,7 +6,7 @@
 - Java 8
 - JPA
 - MySQL
-- thymeleaf
+- ~~thymeleaf~~ vue.js
 - H2
 - JUnit
 - Docker
