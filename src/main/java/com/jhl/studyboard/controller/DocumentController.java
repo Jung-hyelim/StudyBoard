@@ -47,7 +47,7 @@ public class DocumentController {
 	private DocumentService documentService;
 	
 	@GetMapping
-	public ResponseEntity<?> goList(
+	public ResponseEntity<?> getList(
 			@PageableDefault(page = 0, size = LIST_SIZE, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
 			PagedResourcesAssembler<DocumentDTO> assembler) {
 		log.info("rest api call - GET / [" + pageable.toString() + "]");
@@ -110,7 +110,7 @@ public class DocumentController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> goShow(@PathVariable("id") Long id) {
+	public ResponseEntity<?> showDocument(@PathVariable("id") Long id) {
 		log.info("rest api call - GET /"+id);
 		
 		DocumentDTO documentDto = documentService.select(id);

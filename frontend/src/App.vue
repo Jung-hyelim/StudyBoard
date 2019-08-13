@@ -22,9 +22,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      
     </v-navigation-drawer>
-
     <v-app-bar
       app
       color="deep-purple"
@@ -34,7 +32,6 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Study Board</v-toolbar-title>
     </v-app-bar>
-
     <v-content>
       <v-container
         fluid
@@ -44,11 +41,10 @@
           align-center
           justify-center
         >
-      		<router-view></router-view>
+          <router-view></router-view>
         </v-layout>
       </v-container>
     </v-content>
-
     <v-footer color="deep-purple" dark app>
       <span>&copy; 2019</span>
     </v-footer>
@@ -57,14 +53,14 @@
 
 <script>
 export default {
-  name: "App",
+  name: 'App',
   data: () => ({
     drawer: null,
     items: [
-      { icon: "home", text: "홈", router: "home" },
-      { icon: "create", text: "글쓰기", router: "regist" },
-      { icon: "create", text: "상세", router: "show" }
+      { icon: 'home', text: '홈', router: 'home' },
+      { icon: 'create', text: '글쓰기', router: 'regist' },
+      { icon: 'create', text: '상세', router: 'show' }
     ]
   })
-};
+}
 </script>
