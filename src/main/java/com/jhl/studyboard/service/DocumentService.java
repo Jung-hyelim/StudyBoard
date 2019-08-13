@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -53,8 +52,8 @@ public class DocumentService {
 	}
 	
 	@Transactional(readOnly=true)
-	public Page<DocumentDTO> selectList(int page, int size) {
-		Page<Long> ids = documentRepository.findAllOnlyId(PageRequest.of(page, size, Direction.DESC, "id"));
+	public Page<DocumentDTO> selectList(Pageable pageable) {
+		Page<Long> ids = documentRepository.findAllOnlyId(pageable);
 		
 		List<String> keys = ids.stream().map(id -> DocumentDTO.REDIS_KEY_PREFIX + id).collect(toList());
 		List<DocumentDTO> dtoList = redisDocument.multiGet(keys).stream().filter(dto -> dto != null).collect(toList());
