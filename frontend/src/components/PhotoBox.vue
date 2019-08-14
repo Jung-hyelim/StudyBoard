@@ -1,11 +1,12 @@
 <template>
   <div>
     <v-flex xs12 pb-5
-      v-for="(list, index) in photos"
-      :key="index"
+      v-for="(photo, index) in photos"
+      :key="'photo' + index"
     >
       <v-layout align-center justify-start row fill-height>
         <v-text-field
+          v-model="photo.file_path"
           label="파일경로"
           name="file_path"
           type="text"
@@ -13,6 +14,7 @@
           hide-details
         ></v-text-field>
         <v-text-field
+          v-model="photo.file_name"
           label="파일이름"
           name="file_name"
           type="text"
@@ -27,7 +29,8 @@
         </v-btn>
       </v-layout>
       <PhotoTextBox
-        :texts="texts"
+        :texts="photo.photo_texts"
+        :photo_index="index"
         @deleteText="deleteText"
       />
     </v-flex>
@@ -41,15 +44,12 @@ export default {
     PhotoTextBox
   },
   props: ['photos'],
-  data: () => ({
-    texts: []
-  }),
   methods: {
     addText (index) {
-      this.texts.push({position_x: '', position_y: '', text: ''})
+      this.photos[index].photo_texts.push({position_x: '', position_y: '', text: ''})
     },
-    deleteText (index) {
-      this.texts.splice(index, 1)
+    deleteText (photoIndex, textIndex) {
+      this.photos[photoIndex].photo_texts.splice(textIndex, 1)
     }
   }
 }

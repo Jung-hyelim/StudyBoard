@@ -7,9 +7,12 @@
       :items-per-page="itemsPerPage"
       hide-default-footer
       :loading="loading"
-      @page-count="pageCount = $event"
       disable-sort
-    ></v-data-table>
+    >
+      <template v-slot:item.title="props">
+        <router-link :to="{name: 'show', params: {id: props.item.id}}" exact>{{ props.item.title }}</router-link>
+      </template>
+    </v-data-table>
     <div class="text-center pt-2">
       <v-pagination v-model="page" :length="pageCount" color="deep-purple lighten-2"></v-pagination>
     </div>
@@ -17,9 +20,10 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data: () => ({
-    page: 1,
+    page: null,
     pageCount: 0,
     itemsPerPage: 10,
     loading: false,
@@ -27,36 +31,44 @@ export default {
       { text: 'No.', align: 'center', value: 'id' },
       { text: '제목', align: 'left', value: 'title' },
       { text: '조회수', align: 'center', value: 'read_count' },
-      { text: '태그수', align: 'center', value: 'tags_count' },
-      { text: '사진수', align: 'center', value: 'photos_count' },
+      { text: '태그수', align: 'center', value: 'tags.length' },
+      { text: '사진수', align: 'center', value: 'photos.length' },
       { text: '생성일', align: 'center', value: 'create_date' },
       { text: '수정일', align: 'center', value: 'update_date' }
     ],
-    documents: [
-      {
-        id: 1,
-        title: '제목테스트테스트123',
-        read_count: 100,
-        tags_count: 1,
-        photos_count: 5,
-        create_date: '2019-08-01 12:36',
-        update_date: '2019-08-07 12:36'
-      }
-    ]
+    documents: []
   }),
-  mounted: function () {
-    console.log('mounted' + this.page)
+  watch: {
+    page () {
+      this.getList(this.page)
+    }
   },
   created: function () {
-    console.log('created' + this.page)
-    // this.getList()
+    this.page = this.$store.state.page
+    this.getList(this.page)
   },
   methods: {
-    getList () {
-      const baseURI = '/api/document'
-      this.$http.get(baseURI).then((result) => {
-        console.log(result)
+    getList (page) {
+      this.loading = true
+      axios({
+        method: 'get',
+        url: 'http://localhost:8080/api/document',
+        responseType: 'json',
+        params: {
+          page: page - 1
+        }
       })
+        .then((result) => {
+          this.pageCount = result.data.page.totalPages
+          this.documents = result.data._embedded.documentDTOList
+          this.$store.commit('changePage', page)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+        .then(() => {
+          this.loading = false
+        })
     }
   }
 }

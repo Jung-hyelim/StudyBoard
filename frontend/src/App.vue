@@ -57,9 +57,8 @@ export default {
   data: () => ({
     drawer: null,
     items: [
-      { icon: 'home', text: '홈', router: 'home' },
-      { icon: 'create', text: '글쓰기', router: 'regist' },
-      { icon: 'create', text: '상세', router: 'show' }
+      { icon: 'list', text: '목록', router: 'home' },
+      { icon: 'create', text: '글쓰기', router: 'regist' }
     ]
   })
 }

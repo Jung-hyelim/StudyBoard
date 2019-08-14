@@ -1,8 +1,8 @@
 <template>
   <div>
     <v-flex xs12
-      v-for="(list, index) in texts"
-      :key="'text'+index"
+      v-for="(text, index) in texts"
+      :key="'text' + index"
     >
       <v-layout align-center justify-start row>
         <v-flex
@@ -10,12 +10,12 @@
           sm2
         >
           <v-text-field
+            v-model="text.position_x"
             label="x위치"
             name="position_x"
             type="number"
             outlined
             hide-details
-            v-model="list.position_x"
           ></v-text-field>
         </v-flex>
         <v-flex
@@ -23,23 +23,23 @@
           sm2
         >
           <v-text-field
+            v-model="text.position_y"
             label="y위치"
             name="position_y"
             type="number"
             outlined
             hide-details
-            v-model="list.position_y"
           ></v-text-field>
         </v-flex>
         <v-text-field
+          v-model="text.text"
           label="텍스트"
           name="text"
           type="text"
           outlined
           hide-details
-          v-model="list.text"
         ></v-text-field>
-        <v-btn outlined fab small color="red lighten-3" @click="$emit('deleteText', index)">
+        <v-btn outlined fab small color="red lighten-3" @click="$emit('deleteText', photo_index, index)">
           <v-icon>remove</v-icon>
         </v-btn>
       </v-layout>
@@ -49,6 +49,6 @@
 
 <script>
 export default {
-  props: ['texts']
+  props: ['texts', 'photo_index']
 }
 </script>

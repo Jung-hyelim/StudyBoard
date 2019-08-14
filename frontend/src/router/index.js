@@ -25,6 +25,12 @@ export default new Router({
       path: '/:id',
       name: 'show',
       component: Show
+    },
+    {
+      path: '/edit/:id',
+      name: 'edit',
+      component: Regist,
+      props: true
     }
   ]
 })
