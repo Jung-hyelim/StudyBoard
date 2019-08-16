@@ -114,8 +114,7 @@ export default {
     getDocument (id) {
       axios({
         method: 'get',
-        url: 'http://localhost:8080/api/document/' + id,
-        responseType: 'json'
+        url: '/api/document/' + id
       })
         .then((result) => {
           this.document = result.data
@@ -132,8 +131,7 @@ export default {
       if (confirm(this.document.title + ' 을 삭제하시겠습니까?')) {
         axios({
           method: 'delete',
-          url: 'http://localhost:8080/api/document/' + this.document.id,
-          responseType: 'json'
+          url: '/api/document/' + this.document.id
         })
           .then((result) => {
             alert('삭제되었습니다.')

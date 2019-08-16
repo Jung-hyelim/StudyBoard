@@ -1,8 +1,11 @@
 <template>
   <v-container>
     <v-card elevation="12" class="pa-5">
-      <v-card-title>
-        {{ mode }}
+      <v-card-title v-if="mode === 'new'">
+        새 글 작성
+      </v-card-title>
+      <v-card-title v-else>
+        글 수정
       </v-card-title>
       <v-card-text>
         <v-form>
@@ -24,6 +27,7 @@
               type="text"
               outlined
               required
+              :rules="[v => !!v || '필수입력값입니다.']"
             ></v-text-field>
           </v-layout>
           <v-layout align-center justify-center row fill-height>
@@ -33,6 +37,7 @@
               name="content"
               outlined
               required
+              :rules="[v => !!v || '필수입력값입니다.']"
             ></v-textarea>
           </v-layout>
           <PhotoBox
@@ -66,10 +71,8 @@ export default {
     PhotoBox
   },
   data: () => ({
-    mode: 'edit',
-    document: {
-      photos: []
-    }
+    mode: null,
+    document: { photos: [] }
   }),
   created: function () {
     const path = this.$route.path
@@ -95,8 +98,7 @@ export default {
     getDocument (id) {
       axios({
         method: 'get',
-        url: 'http://localhost:8080/api/document/' + id,
-        responseType: 'json'
+        url: '/api/document/' + id
       })
         .then((result) => {
           this.document = result.data
@@ -111,7 +113,7 @@ export default {
     },
     saveDocument () {
       var method = 'post'
-      var url = 'http://localhost:8080/api/document'
+      var url = '/api/document'
 
       if (this.mode === 'edit') {
         method = 'put'
@@ -121,11 +123,17 @@ export default {
       axios({
         method: method,
         url: url,
-        responseType: 'json'
+        contentType: 'application/json',
+        data: {
+          id: this.document.id,
+          title: this.document.title,
+          content: this.document.content,
+          photos: this.document.photos
+        }
       })
         .then((result) => {
           alert('저장되었습니다.')
-          this.$router.push({ name: 'show', params: { id: result.id } })
+          this.$router.push({ name: 'show', params: { id: result.data.id } })
         })
         .catch((error) => {
           console.log(error)

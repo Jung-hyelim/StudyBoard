@@ -52,8 +52,7 @@ export default {
       this.loading = true
       axios({
         method: 'get',
-        url: 'http://localhost:8080/api/document',
-        responseType: 'json',
+        url: '/api/document',
         params: {
           page: page - 1
         }
