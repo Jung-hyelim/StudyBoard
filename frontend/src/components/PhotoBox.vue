@@ -11,7 +11,8 @@
           name="file_path"
           type="text"
           outlined
-          hide-details
+          required
+          :rules="[$store.state.rules.required]"
         ></v-text-field>
         <v-text-field
           v-model="photo.file_name"
@@ -19,7 +20,8 @@
           name="file_name"
           type="text"
           outlined
-          hide-details
+          required
+          :rules="[$store.state.rules.required]"
         ></v-text-field>
         <v-btn outlined fab small color="deep-purple lighten-1" @click="addText(index)">
           <v-icon>comment</v-icon>

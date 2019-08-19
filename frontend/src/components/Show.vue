@@ -114,7 +114,7 @@ export default {
     getDocument (id) {
       axios({
         method: 'get',
-        url: '/api/document/' + id
+        url: this.$store.state.BASE_URL + '/' + id
       })
         .then((result) => {
           this.document = result.data
@@ -131,7 +131,7 @@ export default {
       if (confirm(this.document.title + ' 을 삭제하시겠습니까?')) {
         axios({
           method: 'delete',
-          url: '/api/document/' + this.document.id
+          url: this.$store.state.BASE_URL + '/' + this.document.id
         })
           .then((result) => {
             alert('삭제되었습니다.')

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotNull;
+
 import com.jhl.studyboard.entity.Photo;
 
 import lombok.AllArgsConstructor;
@@ -17,8 +19,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PhotoDTO {
 
-	private String file_path;
-	private String file_name;
+	@NotNull private String file_path;
+	@NotNull private String file_name;
 	private List<PhotoTextDTO> photo_texts = new ArrayList<PhotoTextDTO>();
 	
 	public PhotoDTO(String file_path, String file_name) {

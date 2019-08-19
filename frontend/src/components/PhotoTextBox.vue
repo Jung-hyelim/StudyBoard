@@ -15,7 +15,9 @@
             name="position_x"
             type="number"
             outlined
-            hide-details
+            required
+            :rules="[$store.state.rules.required, $store.state.rules.largerThanZero]"
+            min=0
           ></v-text-field>
         </v-flex>
         <v-flex
@@ -28,7 +30,9 @@
             name="position_y"
             type="number"
             outlined
-            hide-details
+            required
+            :rules="[$store.state.rules.required, $store.state.rules.largerThanZero]"
+            min=0
           ></v-text-field>
         </v-flex>
         <v-text-field
@@ -37,7 +41,8 @@
           name="text"
           type="text"
           outlined
-          hide-details
+          required
+          :rules="[$store.state.rules.required]"
         ></v-text-field>
         <v-btn outlined fab small color="red lighten-3" @click="$emit('deleteText', photo_index, index)">
           <v-icon>remove</v-icon>

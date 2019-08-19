@@ -52,7 +52,7 @@ export default {
       this.loading = true
       axios({
         method: 'get',
-        url: '/api/document',
+        url: this.$store.state.BASE_URL,
         params: {
           page: page - 1
         }

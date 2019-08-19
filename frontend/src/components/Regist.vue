@@ -8,7 +8,7 @@
         글 수정
       </v-card-title>
       <v-card-text>
-        <v-form>
+        <v-form ref="form">
           <v-layout v-if="mode === 'edit'" align-center justify-center row fill-height>
             <v-text-field
               v-model="document.id"
@@ -27,7 +27,7 @@
               type="text"
               outlined
               required
-              :rules="[v => !!v || '필수입력값입니다.']"
+              :rules="[$store.state.rules.required]"
             ></v-text-field>
           </v-layout>
           <v-layout align-center justify-center row fill-height>
@@ -37,7 +37,7 @@
               name="content"
               outlined
               required
-              :rules="[v => !!v || '필수입력값입니다.']"
+              :rules="[$store.state.rules.required]"
             ></v-textarea>
           </v-layout>
           <PhotoBox
@@ -98,7 +98,7 @@ export default {
     getDocument (id) {
       axios({
         method: 'get',
-        url: '/api/document/' + id
+        url: this.$store.state.BASE_URL + '/' + id
       })
         .then((result) => {
           this.document = result.data
@@ -112,8 +112,12 @@ export default {
         })
     },
     saveDocument () {
+      if (!this.$refs.form.validate()) {
+        return
+      }
+
       var method = 'post'
-      var url = '/api/document'
+      var url = this.$store.state.BASE_URL
 
       if (this.mode === 'edit') {
         method = 'put'

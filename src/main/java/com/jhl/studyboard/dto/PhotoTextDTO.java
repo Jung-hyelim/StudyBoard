@@ -1,5 +1,8 @@
 package com.jhl.studyboard.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import com.jhl.studyboard.entity.PhotoText;
 
 import lombok.AllArgsConstructor;
@@ -13,9 +16,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PhotoTextDTO {
 
-	private double position_x;
-	private double position_y;
-	private String text;
+	@NotNull @Min(0) private double position_x;
+	@NotNull @Min(0) private double position_y;
+	@NotNull private String text;
 	
 	public PhotoTextDTO(PhotoText photoText) {
 		this.position_x = photoText.getPosition_x();
