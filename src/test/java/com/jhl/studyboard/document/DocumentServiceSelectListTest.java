@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -55,7 +57,8 @@ public class DocumentServiceSelectListTest {
 	@Test
 	public void selectList() {
 		int pageNumber = 0;
-		Page<DocumentDTO> list = documentService.selectList(pageNumber, PAGE_SIZE);
+		Pageable pageable = PageRequest.of(pageNumber, PAGE_SIZE); 
+		Page<DocumentDTO> list = documentService.selectList(pageable);
 		assertThat(list.getPageable()).isNotNull();
 		assertThat(list.getNumber()).isEqualTo(pageNumber);
 		assertThat(list.getTotalPages()).isEqualTo((TOTAL_COUNT / PAGE_SIZE) + 1);
@@ -63,7 +66,8 @@ public class DocumentServiceSelectListTest {
 		assertThat(list.getContent().size()).isEqualTo(PAGE_SIZE);
 		
 		pageNumber = 1;
-		list = documentService.selectList(pageNumber, PAGE_SIZE);
+		pageable = PageRequest.of(pageNumber, PAGE_SIZE); 
+		list = documentService.selectList(pageable);
 		assertThat(list.getPageable()).isNotNull();
 		assertThat(list.getNumber()).isEqualTo(pageNumber);
 		assertThat(list.getTotalPages()).isEqualTo((TOTAL_COUNT / PAGE_SIZE) + 1);
@@ -71,7 +75,8 @@ public class DocumentServiceSelectListTest {
 		assertThat(list.getContent().size()).isEqualTo(TOTAL_COUNT - PAGE_SIZE);
 		
 		pageNumber = 2;
-		list = documentService.selectList(pageNumber, PAGE_SIZE);
+		pageable = PageRequest.of(pageNumber, PAGE_SIZE); 
+		list = documentService.selectList(pageable);
 		assertThat(list.getContent()).isEmpty();
 	}
 }

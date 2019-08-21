@@ -1,23 +1,46 @@
 package com.jhl.studyboard.controller;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+
+import java.net.URI;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedResources;
+import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.jhl.studyboard.dto.DocumentDTO;
-import com.jhl.studyboard.dto.TagDTO;
+import com.jhl.studyboard.entity.Document;
+import com.jhl.studyboard.resources.DocumentResource;
+import com.jhl.studyboard.resources.ErrorsResource;
 import com.jhl.studyboard.service.DocumentService;
+import com.jhl.studyboard.utils.HashTagUtil;
 
-@Controller
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RestController
+@CrossOrigin(origins = {"http://localhost:8081", "https://study.jhl.com"})
+@RequestMapping(value = "/api/document", produces = MediaTypes.HAL_JSON_UTF8_VALUE)
 public class DocumentController {
 
 	private static final int LIST_SIZE = 10;
@@ -25,83 +48,86 @@ public class DocumentController {
 	@Autowired
 	private DocumentService documentService;
 	
-	@RequestMapping(value="/", method=RequestMethod.GET)
-	public String goList(Model model,
-			@RequestParam(value="page", defaultValue="0") int page) {
-		Page<DocumentDTO> result = documentService.selectList(page, LIST_SIZE);
-		model.addAttribute("list", result.getContent());
-		model.addAttribute("totalPage", result.getTotalPages());
-		model.addAttribute("page", result.getNumber());
-		return "list";
-	}
-
-	@RequestMapping(value="/", method=RequestMethod.POST)
-	public String addDocument(Model model,
-			@ModelAttribute DocumentDTO documentDto) {
+	@GetMapping
+	public ResponseEntity<?> getList(
+			@PageableDefault(page = 0, size = LIST_SIZE, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+			PagedResourcesAssembler<DocumentDTO> assembler) {
+		log.info("rest api call - GET / [" + pageable.toString() + "]");
 		
-		extractHashTag(documentDto);	// 내용에서 태그 추출 후 태그 리스트를 dto에 담는다.
-		documentService.insert(documentDto);
-		return "redirect:/";
+		Page<DocumentDTO> result = documentService.selectList(pageable);
+
+		PagedResources<ResourceSupport> pagedResources = assembler.toResource(result, e -> new DocumentResource(e));
+//		pagedResources.add(new Link("").withRel("profile"));
+		return ResponseEntity.ok(pagedResources);
 	}
 
-	@RequestMapping(value="/", method=RequestMethod.PUT)
-	public String editDocument(Model model,
-			@ModelAttribute DocumentDTO documentDto,
-			@RequestParam(value="page", defaultValue="0") int page) {
+	@PostMapping
+	public ResponseEntity<?> addDocument(@RequestBody @Valid DocumentDTO documentDto, Errors errors) {
+		log.info("rest api call - POST /");
 		
-		extractHashTag(documentDto);	// 내용에서 태그 추출 후 태그 리스트를 dto에 담는다.
-		documentService.update(documentDto);
-		return "redirect:/" + documentDto.getId() + "?page="+page;
-	}
-
-	@RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-	public String deleteDocument(Model model,
-			@PathVariable("id") Long id,
-			@RequestParam(value="page", defaultValue="0") int page) {
-		documentService.delete(id);
-		return "redirect:/?page=" + page;
-	}
-
-	@RequestMapping(value="/{id}", method=RequestMethod.GET)
-	public String goShow(Model model,
-			@PathVariable("id") Long id,
-			@RequestParam(value="page", defaultValue="0") int page) {
-		DocumentDTO documentDto = documentService.select(id);
-		model.addAttribute("document", documentDto);
-		model.addAttribute("page", page);
-		return "show";
-	}
-
-	@RequestMapping(value="/new", method=RequestMethod.GET)
-	public String goNew(Model model) {
-		DocumentDTO dto = new DocumentDTO();
-		model.addAttribute("document", dto);
-		model.addAttribute("mode", "new");
-		return "regist";
-	}
-	
-	@RequestMapping(value="/edit/{id}", method=RequestMethod.GET)
-	public String goEdit(Model model,
-			@PathVariable("id") Long id,
-			@RequestParam(value="page", defaultValue="0") int page) {
-		DocumentDTO documentDto = documentService.select(id);
-		model.addAttribute("document", documentDto);
-		model.addAttribute("mode", "edit");
-		model.addAttribute("page", page);
-		return "regist";
-	}
-	
-	// 내용에서 해시태그 추출 후 태그 리스트를 dto에 담는다.
-	public void extractHashTag(DocumentDTO dto) {
-		Pattern p = Pattern.compile("\\#([0-9a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ_]*)");
-		Matcher m = p.matcher(dto.getContent());
-		String extractText = null;
-		
-		while(m.find()) {
-			extractText = m.group(1);
-			if(extractText != null && !extractText.equals("")) {
-				dto.addTag(new TagDTO(extractText));
-			}
+		if (errors.hasErrors()) {
+			return badRequest(errors);
 		}
+		
+		HashTagUtil.extractHashTag(documentDto);
+		Document newDocument = documentService.insert(documentDto);
+		documentDto.setId(newDocument.getId());
+
+		ControllerLinkBuilder selfLinkBuilder = linkTo(DocumentController.class).slash(newDocument.getId());
+		URI createdUri = selfLinkBuilder.toUri();
+		DocumentResource documentResource = new DocumentResource(documentDto);
+		documentResource.add(linkTo(DocumentController.class).withRel("list"));
+		documentResource.add(selfLinkBuilder.withRel("update"));
+//		documentResource.add(new Link("").withRel("profile"));
+		return ResponseEntity.created(createdUri).body(documentResource);
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<?> editDocument(@PathVariable("id") Long id,
+			@RequestBody @Valid DocumentDTO documentDto, Errors errors) {
+		log.info("rest api call - PUT /"+id);
+		
+		if (errors.hasErrors()) {
+			return badRequest(errors);
+		}
+		
+		if(documentDto.getId() != id) {
+			return ResponseEntity.badRequest().build();
+		}
+
+		HashTagUtil.extractHashTag(documentDto);
+		documentService.update(documentDto);
+		
+		DocumentResource documentResource = new DocumentResource(documentDto);
+//		documentResource.add(new Link("").withRel("profile"));
+		return ResponseEntity.ok(documentResource);
+	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteDocument(@PathVariable("id") Long id) {
+		log.info("rest api call - DELETE /"+id);
+		
+		documentService.delete(id);
+		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<?> showDocument(@PathVariable("id") Long id) {
+		log.info("rest api call - GET /"+id);
+		
+		DocumentDTO documentDto = documentService.select(id);
+		
+		if(documentDto == null) {
+			return ResponseEntity.notFound().build();
+		}
+		
+		DocumentResource documentResource = new DocumentResource(documentDto);
+//		documentResource.add(new Link("").withRel("profile"));
+		documentResource.add(linkTo(DocumentController.class).slash(documentDto.getId()).withRel("update-document"));
+		return ResponseEntity.ok(documentResource);
+	}
+	
+	private ResponseEntity<?> badRequest(Errors errors) {
+		return ResponseEntity.badRequest().body(new ErrorsResource(errors));
 	}
 }

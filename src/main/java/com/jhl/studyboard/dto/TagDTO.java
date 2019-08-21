@@ -1,5 +1,7 @@
 package com.jhl.studyboard.dto;
 
+import javax.validation.constraints.NotNull;
+
 import com.jhl.studyboard.entity.DocumentAndTag;
 import com.jhl.studyboard.entity.Tag;
 
@@ -15,7 +17,7 @@ import lombok.Setter;
 public class TagDTO {
 
 	private Long id;
-	private String name;
+	@NotNull private String name;
 	
 	public TagDTO(String name) {
 		this.name = name;
