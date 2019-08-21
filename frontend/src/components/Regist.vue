@@ -74,18 +74,32 @@ export default {
     mode: null,
     document: { photos: [] }
   }),
-  created: function () {
+  watch: {
+    '$route' (to, from) {
+      if (to.path.indexOf('new') !== -1) {
+        this.mode = 'new'
+      } else {
+        this.mode = 'edit'
+      }
+    },
+    mode () {
+      if (this.mode === 'new') {
+        this.document = { photos: [] }
+      } else {
+        if (this.$route.params.document !== undefined) {
+          this.document = this.$route.params.document
+        } else {
+          this.getDocument(this.$route.params.id)
+        }
+      }
+    }
+  },
+  created () {
     const path = this.$route.path
     if (path.indexOf('new') !== -1) {
       this.mode = 'new'
     } else {
       this.mode = 'edit'
-
-      if (this.$route.params.document !== undefined) {
-        this.document = this.$route.params.document
-      } else {
-        this.getDocument(this.$route.params.id)
-      }
     }
   },
   methods: {
@@ -107,8 +121,6 @@ export default {
           console.log(error)
           alert('비정상 접근입니다.')
           this.$router.push({ name: 'home' })
-        })
-        .then(() => {
         })
     },
     saveDocument () {
@@ -142,8 +154,6 @@ export default {
         .catch((error) => {
           console.log(error)
           alert('저장에 실패했습니다.')
-        })
-        .then(() => {
         })
     }
   }

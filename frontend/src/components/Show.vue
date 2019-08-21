@@ -89,7 +89,7 @@
         <v-btn
           color="indigo lighten-1"
           dark
-          @click="editDocument"
+          router :to="{ name: 'edit', params: { id: this.$route.params.id, document: document } }" exact
         ><v-icon>edit</v-icon>수정</v-btn>
         <v-btn
           color="blue-grey lighten-1"
@@ -124,8 +124,6 @@ export default {
           alert('비정상 접근입니다.')
           this.$router.push({ name: 'home' })
         })
-        .then(() => {
-        })
     },
     deleteDocument () {
       if (confirm(this.document.title + ' 을 삭제하시겠습니까?')) {
@@ -144,15 +142,6 @@ export default {
             this.$router.push({ name: 'home' })
           })
       }
-    },
-    editDocument () {
-      this.$router.push({
-        name: 'edit',
-        params: {
-          id: this.document.id,
-          document: this.document
-        }
-      })
     }
   }
 }

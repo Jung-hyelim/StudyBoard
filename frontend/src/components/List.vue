@@ -43,9 +43,8 @@ export default {
       this.getList(this.page)
     }
   },
-  created: function () {
+  created () {
     this.page = this.$store.state.page
-    this.getList(this.page)
   },
   methods: {
     getList (page) {
