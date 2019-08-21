@@ -39,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = {"http://localhost:8081"})
+@CrossOrigin(origins = {"http://localhost:8081", "https://study.jhl.com"})
 @RequestMapping(value = "/api/document", produces = MediaTypes.HAL_JSON_UTF8_VALUE)
 public class DocumentController {
 
