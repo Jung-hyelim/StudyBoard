@@ -6,12 +6,12 @@
 - Java 8
 - JPA
 - MySQL
-- ~~thymeleaf~~ vue.js
 - H2
 - JUnit
 - Docker
 - Redis
 - kafka
+- Vue.js
 
 ## 시스템 구성도
 ![시스템구성도](./images/studyboard-시스템구성도.png)
